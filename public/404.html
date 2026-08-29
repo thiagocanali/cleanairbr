@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CleanAir</title>
+    <script>
+      // GitHub Pages SPA fallback: redireciona para a raiz preservando o caminho.
+      // O Vue Router cuida do resto a partir do sessionStorage.
+      (function () {
+        var redirect = sessionStorage.redirect;
+        delete sessionStorage.redirect;
+        if (redirect && redirect !== location.href) {
+          history.replaceState(null, null, redirect);
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <script>
+      // Se o usuário acessou diretamente uma rota (ex.: /services), guarda o destino
+      // antes do redirect e volta para a raiz para o SPA carregar.
+      var path = location.pathname + location.search + location.hash;
+      if (path !== "/" && !sessionStorage.redirect) {
+        sessionStorage.redirect = location.href;
+        location.replace("/cleanairbr/");
+      }
+    </script>
+  </body>
+</html>

@@ -5,7 +5,7 @@
     rel="noopener noreferrer"
     class="whatsapp-button"
   >
-    <img src="/whatsapp-icon.svg" alt="WhatsApp" />
+    <span class="whatsapp-icon" aria-hidden="true">💬</span>
     Fale Conosco
   </a>
 </template>
@@ -46,8 +46,11 @@ export default {
 .whatsapp-button:hover {
   transform: scale(1.05);
 }
-.whatsapp-button img {
+.whatsapp-button img,
+.whatsapp-icon {
   width: 24px;
   height: 24px;
+  font-size: 22px;
+  line-height: 1;
 }
 </style>

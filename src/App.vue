@@ -30,11 +30,24 @@ body {
   font-family: "Inter", sans-serif;
   background: #f4f6fa;
   color: #222;
+  line-height: 1.6;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+:focus-visible {
+  outline: 3px solid #ffb703;
+  outline-offset: 3px;
 }
 
 section {
   max-width: 1100px;
   margin: auto;
   padding: 70px 20px;
+  scroll-margin-top: 110px;
 }
 </style>

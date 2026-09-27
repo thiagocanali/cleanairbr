@@ -3,10 +3,10 @@
     <h2 class="title">Contato</h2>
 
     <div class="contact-box">
-      <p><strong>WhatsApp:</strong> (47) 9122-3570</p>
-      <p><strong>Email:</strong> atendimento.cleanair@gmail.com</p>
+      <p><strong>WhatsApp:</strong> <a href="tel:+554791223570">(47) 9122-3570</a></p>
+      <p><strong>Email:</strong> <a href="mailto:atendimento.cleanair@gmail.com">atendimento.cleanair@gmail.com</a></p>
       <p><strong>Região:</strong> Atendimento em SC e regiões próximas</p>
-      <a class="contact-btn" href="https://wa.me/554791223570" target="_blank">Falar no WhatsApp</a>
+      <a class="contact-btn" href="https://wa.me/554791223570" target="_blank" rel="noopener noreferrer" aria-label="Falar com a CleanAir pelo WhatsApp">Falar no WhatsApp</a>
     </div>
   </section>
 </template>

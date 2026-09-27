@@ -2,9 +2,15 @@
   <section id="hero" class="hero">
     <div class="overlay"></div>
     <div class="hero-content">
-      <h2>Higienização Profissional de Ar Condicionado</h2>
+      <h1>Higienização Profissional de Ar Condicionado</h1>
       <p>Atendimento rápido, seguro e de qualidade para residências e empresas.</p>
-      <a class="cta" href="https://wa.me/554791223570?text=Olá,+quero+um+atendimento+CleanAir" target="_blank">
+      <a
+        class="cta"
+        href="https://wa.me/554791223570?text=Ol%C3%A1%2C%20quero%20um%20atendimento%20CleanAir"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Solicitar atendimento pelo WhatsApp"
+      >
         Solicitar Atendimento
       </a>
     </div>

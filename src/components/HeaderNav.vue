@@ -10,6 +10,7 @@
         <a class="nav-link" @click.prevent="goHome('about')" href="/#about">Sobre Nós</a>
         <a class="nav-link" @click.prevent="goHome('contact')" href="/#contact">Contato</a>
         <router-link class="nav-link professional-link" to="/admin">Área profissional</router-link>
+        <router-link class="nav-link professional-link" to="/clients">Clientes</router-link>
       </nav>
     </div>
   </header>

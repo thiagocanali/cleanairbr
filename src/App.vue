@@ -1,8 +1,11 @@
 <template>
   <div id="app">
+    <a class="skip-link" href="#main-content">Pular para o conteúdo principal</a>
     <HeaderNav />
 
-    <router-view />
+    <main id="main-content" tabindex="-1">
+      <router-view />
+    </main>
 
     <SiteFooter />
     <FloatingWhatsapp />
@@ -25,6 +28,23 @@ export default {
 </script>
 
 <style>
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  padding: 10px 14px;
+  border-radius: 8px;
+  background: #123b5d;
+  color: #fff;
+  transform: translateY(-180%);
+  transition: transform 160ms ease;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
 body {
   margin: 0;
   font-family: "Inter", sans-serif;

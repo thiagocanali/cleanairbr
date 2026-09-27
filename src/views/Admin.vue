@@ -6,7 +6,7 @@
         <h1>Bom dia, Clean Air</h1>
         <p class="date-label">Visão geral da operação</p>
       </div>
-      <button class="primary-action" type="button">+ Novo serviço</button>
+      <button class="primary-action" type="button" @click="openServiceForm">+ Novo serviço</button>
     </header>
 
     <section class="metrics" aria-label="Resumo da operação">
@@ -35,8 +35,23 @@
     </div>
 
     <section class="quick-actions" aria-label="Ações rápidas">
-      <button v-for="action in actions" :key="action.title" class="quick-action" type="button"><span aria-hidden="true">{{ action.icon }}</span><strong>{{ action.title }}</strong><small>{{ action.description }}</small></button>
+      <button v-for="action in actions" :key="action.title" class="quick-action" type="button" @click="runQuickAction(action.title)"><span aria-hidden="true">{{ action.icon }}</span><strong>{{ action.title }}</strong><small>{{ action.description }}</small></button>
     </section>
+
+    <div v-if="showServiceForm" class="modal-backdrop" @click.self="closeServiceForm">
+      <section class="service-modal" role="dialog" aria-modal="true" aria-labelledby="service-modal-title">
+        <button class="modal-close" type="button" aria-label="Fechar formulário" @click="closeServiceForm">×</button>
+        <p class="eyebrow">Agenda</p>
+        <h2 id="service-modal-title">Novo serviço</h2>
+        <p class="modal-intro">Registre o próximo atendimento para não perder nenhum compromisso.</p>
+        <form @submit.prevent="saveService">
+          <label>Cliente<input v-model.trim="newService.client" required placeholder="Nome do cliente" /></label>
+          <div class="form-row"><label>Data<input v-model="newService.date" required type="date" /></label><label>Horário<input v-model="newService.time" required type="time" /></label></div>
+          <label>Tipo de serviço<select v-model="newService.type"><option>Limpeza</option><option>Manutenção</option><option>Avaliação</option></select></label>
+          <div class="modal-actions"><button class="secondary-action" type="button" @click="closeServiceForm">Cancelar</button><button class="primary-action" type="submit">Salvar serviço</button></div>
+        </form>
+      </section>
+    </div>
   </div>
 </template>
 
@@ -66,7 +81,24 @@ export default {
         { icon: "Agenda", title: "Abrir agenda", description: "Organize seus horários" },
         { icon: "Histórico", title: "Histórico", description: "Consulte serviços anteriores" },
       ],
+      showServiceForm: false,
+      newService: { client: "", date: "", time: "", type: "Limpeza" },
     };
+  },
+  methods: {
+    openServiceForm() {
+      this.showServiceForm = true;
+    },
+    closeServiceForm() {
+      this.showServiceForm = false;
+    },
+    saveService() {
+      this.closeServiceForm();
+      this.newService = { client: "", date: "", time: "", type: "Limpeza" };
+    },
+    runQuickAction(title) {
+      if (title === "Abrir agenda") this.openServiceForm();
+    },
   },
 };
 </script>
@@ -79,6 +111,7 @@ h1, h2, p { margin-top: 0; } h1 { margin-bottom: 6px; font-size: clamp(2rem, 4vw
 .primary-action, .contact-action { border: 0; border-radius: 10px; background: #067da2; color: #fff; cursor: pointer; font-weight: 800; } .primary-action { padding: 14px 20px; } .primary-action:hover, .contact-action:hover { background: #056782; }
 .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 22px; }.metric-card, .panel, .quick-action { border: 1px solid #dbe8ed; border-radius: 16px; background: rgba(255,255,255,.86); box-shadow: 0 8px 24px rgba(21,48,74,.05); }.metric-card { display: flex; align-items: center; gap: 14px; padding: 20px; }.metric-icon { display: grid; place-items: center; min-width: 44px; height: 44px; border-radius: 12px; background: #e4f4f7; color: #067da2; font-size: .65rem; font-weight: 900; text-align: center; }.metric-card strong, .metric-card span:not(.metric-icon) { display: block; }.metric-card strong { font-size: 1.7rem; line-height: 1; }.metric-card span:not(.metric-icon) { margin-top: 5px; color: #668097; font-size: .8rem; }
 .admin-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 22px; }.panel { padding: 24px; }.panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; }.text-action { border: 0; background: transparent; color: #067da2; cursor: pointer; font-weight: 800; }.service-list, .reminder-list { display: grid; gap: 10px; }.service-row, .reminder-list li { display: flex; align-items: center; gap: 16px; padding: 14px 0; border-top: 1px solid #e8f0f2; }.service-row:first-child, .reminder-list li:first-child { border-top: 0; }.service-row time { min-width: 48px; color: #067da2; font-size: .85rem; font-weight: 900; }.service-row div, .reminder-list li div { flex: 1; }.service-row strong, .service-row span, .reminder-list strong, .reminder-list li div span { display: block; }.service-row span, .reminder-list li div span { color: #668097; font-size: .82rem; }.status { padding: 5px 8px; border-radius: 6px; font-size: .7rem !important; font-weight: 800; }.status-next { background: #fff2d6; color: #9a6500 !important; }.status-scheduled { background: #e5f4f5; color: #067d83 !important; }.reminder-dot { width: 9px; height: 9px; border-radius: 50%; background: #ffb703; }.contact-action { padding: 8px 10px; font-size: .75rem; }.quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }.quick-action { display: grid; grid-template-columns: auto 1fr; column-gap: 12px; padding: 18px; text-align: left; cursor: pointer; color: #15304a; }.quick-action span { grid-row: span 2; color: #067da2; font-weight: 900; }.quick-action small { color: #668097; }
+.modal-backdrop { position: fixed; inset: 0; z-index: 10; display: grid; place-items: center; padding: 20px; background: rgba(11, 35, 52, .48); }.service-modal { position: relative; width: min(100%, 500px); padding: 28px; border-radius: 18px; background: #fff; box-shadow: 0 24px 80px rgba(11, 35, 52, .25); }.service-modal h2 { margin-bottom: 8px; }.modal-intro { margin-bottom: 22px; color: #668097; }.modal-close { position: absolute; top: 16px; right: 18px; border: 0; background: transparent; color: #668097; font-size: 1.7rem; cursor: pointer; }.service-modal form { display: grid; gap: 16px; }.service-modal label { display: grid; gap: 7px; color: #15304a; font-size: .82rem; font-weight: 800; }.service-modal input, .service-modal select { width: 100%; box-sizing: border-box; padding: 12px; border: 1px solid #cbdde3; border-radius: 9px; background: #fff; color: #15304a; font: inherit; }.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }.modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }.secondary-action { padding: 12px 16px; border: 1px solid #cbdde3; border-radius: 9px; background: #fff; color: #15304a; cursor: pointer; font-weight: 800; }
 @media (max-width: 800px) { .admin-page { padding: 130px 16px 50px; }.admin-header { align-items: flex-start; flex-direction: column; }.primary-action { width: 100%; }.metrics { grid-template-columns: repeat(2, 1fr); }.admin-grid { grid-template-columns: 1fr; }.quick-actions { grid-template-columns: 1fr; } }
 @media (max-width: 420px) { .metric-card { padding: 14px 10px; gap: 8px; }.metric-icon { min-width: 38px; height: 38px; font-size: .55rem; }.metric-card strong { font-size: 1.35rem; }.metric-card span:not(.metric-icon) { font-size: .7rem; } .service-row { gap: 9px; }.status { display: none !important; } }
 </style>

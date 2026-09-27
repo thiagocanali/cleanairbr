@@ -82,4 +82,26 @@ export default {
 .nav-links .nav-link.router-link-exact-active {
   color: #005baa;
 }
+
+@media (max-width: 700px) {
+  .navbar {
+    padding: 12px 0;
+  }
+
+  .nav-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .nav-links {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px 14px;
+  }
+
+  .nav-links .nav-link {
+    font-size: 14px;
+  }
+}
 </style>

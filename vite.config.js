@@ -2,6 +2,9 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
-plugins: [vue()],
-base: '/cleanairbr/'
+  plugins: [vue()],
+  base: '/cleanairbr/',
+  server: {
+    allowedHosts: ['.vercel.run'],
+  },
 });

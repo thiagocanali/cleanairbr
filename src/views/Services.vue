@@ -1,92 +1,39 @@
 <template>
-  <div class="services-page">
+  <main class="services-page">
     <header class="services-hero">
-      <h1>Nossos Serviços</h1>
-      <p>Profissionalismo, qualidade e atendimento especializado.</p>
+      <div>
+        <p>Serviços CleanAir</p>
+        <h1>Cuidado técnico para um ar mais saudável.</h1>
+        <span>Profissionalismo, qualidade e atendimento especializado.</span>
+      </div>
     </header>
-
-    <section class="services-grid">
-
-      <div class="service-card">
-        <h3>Higienização Completa</h3>
-        <p>Remoção de fungos, poeira e bactérias para garantir ar puro e seguro.</p>
-        <a class="whats-btn" :href="whats('Quero higienização completa')">Solicitar</a>
+    <section class="services-list">
+      <div class="services-grid">
+        <article v-for="(service, index) in services" :key="service.title" class="service-card">
+          <span>0{{ index + 1 }}</span><h2>{{ service.title }}</h2><p>{{ service.description }}</p>
+          <a :href="whats(service.message)" target="_blank" rel="noopener noreferrer">Solicitar pelo WhatsApp <b aria-hidden="true">→</b></a>
+        </article>
       </div>
-
-      <div class="service-card">
-        <h3>Limpeza da Evaporadora</h3>
-        <p>Limpeza interna garantindo eficiência e saúde no ambiente.</p>
-        <a class="whats-btn" :href="whats('Quero limpeza da evaporadora')">Solicitar</a>
-      </div>
-
-      <div class="service-card">
-        <h3>Limpeza da Condensadora</h3>
-        <p>Melhora o desempenho e reduz consumo de energia.</p>
-        <a class="whats-btn" :href="whats('Quero limpeza da condensadora')">Solicitar</a>
-      </div>
-
-      <div class="service-card">
-        <h3>Manutenção Preventiva</h3>
-        <p>Evite problemas, aumente a vida útil e economize dinheiro.</p>
-        <a class="whats-btn" :href="whats('Quero manutenção preventiva')">Solicitar</a>
-      </div>
-
-      <div class="service-card">
-        <h3>Troca de Filtros</h3>
-        <p>Garantia de ar mais limpo e maior eficiência do aparelho.</p>
-        <a class="whats-btn" :href="whats('Quero troca de filtros')">Solicitar</a>
-      </div>
-
     </section>
-  </div>
+  </main>
 </template>
 
 <script>
 export default {
-  methods: {
-    whats(msg) {
-      const number = "554791223570";
-      return `https://wa.me/${number}?text=${encodeURIComponent(msg)}`;
-    }
-  }
+  data: () => ({ services: [
+    { title: "Higienização Completa", description: "Remoção de fungos, poeira e bactérias para garantir ar puro e seguro.", message: "Quero higienização completa" },
+    { title: "Limpeza da Evaporadora", description: "Limpeza interna garantindo eficiência e saúde no ambiente.", message: "Quero limpeza da evaporadora" },
+    { title: "Limpeza da Condensadora", description: "Melhora o desempenho e reduz consumo de energia.", message: "Quero limpeza da condensadora" },
+    { title: "Manutenção Preventiva", description: "Evite problemas, aumente a vida útil e economize dinheiro.", message: "Quero manutenção preventiva" },
+    { title: "Troca de Filtros", description: "Garantia de ar mais limpo e maior eficiência do aparelho.", message: "Quero troca de filtros" },
+  ] }),
+  methods: { whats(message) { return `https://wa.me/554791223570?text=${encodeURIComponent(message)}`; } },
 };
 </script>
 
-<style>
-.services-hero {
-  text-align: center;
-  padding: 70px 20px;
-  background: #005baa;
-  color: white;
-}
-.services-grid {
-  max-width: 1100px;
-  margin: auto;
-  padding: 60px 20px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 25px;
-}
-.service-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-}
-.service-card h3 {
-  margin-bottom: 10px;
-  color: #005baa;
-}
-.whats-btn {
-  display: inline-block;
-  margin-top: 15px;
-  background: #25D366;
-  color: white;
-  padding: 10px 15px;
-  border-radius: 6px;
-  text-decoration: none;
-}
-.whats-btn:hover {
-  background: #1da851;
-}
+<style scoped>
+.services-hero { display: grid; place-items: center; min-height: 360px; padding: 72px 24px; background: var(--navy); color: #fff; text-align: center; }.services-hero div { max-width: 720px; }.services-hero p { margin: 0 0 16px; color: #99d9ec; font-size: .75rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; }.services-hero h1 { margin: 0; font-size: clamp(2.3rem, 5vw, 4.2rem); letter-spacing: -.055em; line-height: 1.02; }.services-hero span { display: block; margin-top: 22px; color: #d1e7ef; }
+.services-list { width: min(1120px, 100%); margin: auto; padding: 74px 24px 96px; }.services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }.service-card { padding: 30px; background: #fff; border: 1px solid var(--line); }.service-card span { color: var(--blue); font-size: .75rem; font-weight: 800; letter-spacing: .1em; }.service-card h2 { margin: 30px 0 12px; color: var(--navy); font-size: 1.25rem; letter-spacing: -.025em; }.service-card p { min-height: 78px; margin: 0; color: var(--muted); line-height: 1.65; }.service-card a { display: inline-block; margin-top: 26px; color: var(--blue); font-size: .9rem; font-weight: 800; text-decoration: none; }.service-card a:hover { color: var(--navy); }
+@media (max-width: 850px) { .services-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .services-list { padding: 52px 20px 68px; }.services-grid { grid-template-columns: 1fr; }.service-card p { min-height: auto; } }
 </style>

@@ -58,14 +58,15 @@ const tabs=['Clientes','Atendimentos','Lembretes'];
 const tab=ref('Clientes'),authenticated=ref(false),busy=ref(false),message=ref(''),email=ref(''),password=ref('');
 const customers=ref([]),search=ref(''),showCustomerForm=ref(false),customer=reactive({full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false});
 const selectedCustomerId=ref(''),selectedEquipmentId=ref(''),equipments=ref([]),visits=ref([]),reminders=ref([]),showEquipmentForm=ref(false),equipment=reactive({label:'',brand:'',model:''});
-const visit=reactive({service_type:'higienizacao',description:'',next_contact_on:''});
+const nextYear=()=>{const date=new Date();date.setFullYear(date.getFullYear()+1);return date.toISOString().slice(0,10)};
+const visit=reactive({service_type:'higienizacao',description:'',next_contact_on:nextYear()});
 const measure=reactive({antes:{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''},depois:{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''}});
 let searchTimer;
 onBeforeUnmount(()=>clearTimeout(searchTimer));
 const fail=e=>{message.value=e.message||'Ocorreu um erro.'};
 const run=async(fn)=>{busy.value=true;message.value='';try{await fn()}catch(e){fail(e)}finally{busy.value=false}};
 const refreshCustomers=async()=>{customers.value=await listCustomers(search.value)};
-const login=()=>run(async()=>{await signIn(email.value,password.value);authenticated.value=true;password.value='';await Promise.all([refreshCustomers(),refreshReminders()])});
+const login=()=>run(async()=>{await signIn(email.value,password.value);try{await Promise.all([refreshCustomers(),refreshReminders()]);authenticated.value=true;password.value=''}catch(error){await signOut();throw error}});
 const logout=()=>run(async()=>{await signOut();authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[];selectedCustomerId.value='';selectedEquipmentId.value=''});
 const debouncedSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>run(refreshCustomers),300)};
 const saveCustomer=()=>run(async()=>{await addCustomer({...customer,email:customer.email||null,phone:customer.phone||null});Object.assign(customer,{full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false});showCustomerForm.value=false;await refreshCustomers();message.value='Cliente salvo.'});
@@ -78,7 +79,7 @@ const saveVisit=()=>run(async()=>{
  const next=visit.next_contact_on;
  const saved=await addVisit({equipment_id:selectedEquipmentId.value,service_type:visit.service_type,description:visit.description||null,next_contact_on:next||null},measurements);
  if(next) {try{await addReminder({customer_id:selectedCustomerId.value,equipment_id:selectedEquipmentId.value,visit_id:saved.id,due_on:next})}catch(e){message.value='Atendimento salvo, mas lembrete não criado: '+e.message}}
- Object.assign(visit,{service_type:'higienizacao',description:'',next_contact_on:''});for(const phase of ['antes','depois'])Object.assign(measure[phase],{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''});await Promise.all([loadVisits(),refreshReminders()]);if(!message.value)message.value='Atendimento salvo.';
+ Object.assign(visit,{service_type:'higienizacao',description:'',next_contact_on:nextYear()});for(const phase of ['antes','depois'])Object.assign(measure[phase],{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''});await Promise.all([loadVisits(),refreshReminders()]);if(!message.value)message.value='Atendimento salvo.';
 });
 const refreshReminders=async()=>{reminders.value=await listReminders()};
 const markReminder=id=>run(async()=>{await completeReminder(id);await refreshReminders();message.value='Contato registrado.'});

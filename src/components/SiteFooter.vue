@@ -1,17 +1,4 @@
-<template>
-  <footer class="footer">
-    <div class="footer-inner">
-      <router-link to="/" class="footer-logo">Clean<span>Air</span></router-link>
-      <p>CleanAir © 2025 — Todos os direitos reservados.</p>
-      <a href="#hero">Voltar ao topo ↑</a>
-    </div>
-  </footer>
-</template>
-
+<template><footer class="footer"><div class="footer-inner"><div class="footer-top"><div><router-link to="/" class="footer-logo">Clean<span>Air</span><span class="footer-dot">.</span></router-link><p>Higienização e manutenção de ar-condicionado para residências e empresas.</p></div><div class="footer-links"><router-link to="/">Início</router-link><router-link to="/services">Serviços</router-link><router-link to="/#about">Sobre nós</router-link><a href="https://wa.me/554791223570" target="_blank" rel="noopener noreferrer">WhatsApp ↗</a></div></div><div class="footer-bottom"><span>© {{new Date().getFullYear()}} CleanAir. Todos os direitos reservados.</span><span>Blumenau · Santa Catarina</span></div></div></footer></template>
 <style scoped>
-.footer { padding: 26px 24px; background: #062a41; color: #b7cbd5; }
-.footer-inner { width: min(1120px, 100%); margin: auto; display: flex; justify-content: space-between; align-items: center; gap: 18px; font-size: .82rem; }
-.footer-logo { color: #fff; font-size: 1.15rem; font-weight: 800; letter-spacing: -.05em; text-decoration: none; }.footer-logo span { color: #79cfe9; }
-.footer p { margin: 0; }.footer a:not(.footer-logo) { color: #d5e8ef; text-decoration: none; font-weight: 600; }.footer a:hover { color: #fff; }
-@media (max-width: 640px) { .footer-inner { flex-direction: column; align-items: flex-start; } }
+.footer{padding:64px 24px 24px;background:#092e40;color:#b6d0d9}.footer-inner{max-width:1120px;margin:auto}.footer-top{display:flex;justify-content:space-between;gap:40px;padding-bottom:55px}.footer-logo{color:#fff;font-size:2rem;font-weight:850;letter-spacing:-.07em;text-decoration:none}.footer-logo span{color:#7ed3e2}.footer-logo .footer-dot{color:#fff}.footer-top p{max-width:340px;line-height:1.7;font-size:.95rem}.footer-links{display:grid;grid-template-columns:repeat(2,minmax(100px,1fr));gap:20px 42px;align-content:start}.footer-links a{color:#d5e8ed;text-decoration:none;font-size:.9rem;font-weight:650}.footer-links a:hover{color:#fff}.footer-bottom{display:flex;justify-content:space-between;gap:16px;padding-top:22px;border-top:1px solid #ffffff24;font-size:.79rem}@media(max-width:620px){.footer-top,.footer-bottom{flex-direction:column}.footer-links{margin-top:12px}}
 </style>

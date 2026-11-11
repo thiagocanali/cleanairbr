@@ -1,30 +1,9 @@
 <template>
-  <section id="why" class="why-section">
-    <div class="section-inner">
-      <div class="why-heading">
-        <div>
-          <p class="section-label">Por que escolher</p>
-          <h2 class="section-title">Confiança no serviço, tranquilidade no ambiente.</h2>
-        </div>
-        <p class="section-intro">Atendimento próximo e uma execução cuidadosa do início ao fim.</p>
-      </div>
-      <div class="why-grid">
-        <article class="why-item"><span class="why-icon">01</span><h3>Excelência no Atendimento</h3><p>Profissionais qualificados e equipamentos modernos.</p></article>
-        <article class="why-item"><span class="why-icon">02</span><h3>Agendamento Rápido</h3><p>Horários flexíveis e atendimento imediato.</p></article>
-        <article class="why-item"><span class="why-icon">03</span><h3>Serviço Garantido</h3><p>Garantia completa em todos os serviços realizados.</p></article>
-      </div>
-    </div>
-  </section>
+<section id="why" class="why-section"><div class="section-inner why-layout"><div class="why-intro"><p class="section-label">Nosso jeito de trabalhar</p><h2 class="section-title">Cuidado de verdade, sem complicação.</h2><p class="section-intro">Cada equipamento e ambiente tem necessidades próprias. Por isso, valorizamos a conversa clara e a atenção ao serviço.</p><a class="why-link" href="#contact">Converse com a CleanAir <span aria-hidden="true">↗</span></a></div><div class="why-items"><article v-for="(item,index) in items" :key="item.title"><span>0{{index+1}}</span><div><h3>{{item.title}}</h3><p>{{item.text}}</p></div></article></div></div></section>
 </template>
-
+<script setup>
+const items=[{title:'Atendimento próximo',text:'Entendemos sua necessidade antes de orientar o próximo passo.'},{title:'Cuidado com o ambiente',text:'Atenção ao equipamento e ao espaço durante a execução do serviço.'},{title:'Orientações transparentes',text:'Explicações objetivas sobre o atendimento e os cuidados recomendados.'}];
+</script>
 <style scoped>
-.why-section { background: var(--sky); }
-.why-heading { display: flex; justify-content: space-between; align-items: end; gap: 48px; }
-.why-heading .section-intro { margin: 0; }
-.why-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 46px; }
-.why-item { padding: 30px; background: rgba(255,255,255,.68); border: 1px solid rgba(11,99,149,.14); }
-.why-icon { display: block; color: var(--blue); font-size: .78rem; font-weight: 800; letter-spacing: .1em; }
-h3 { margin: 42px 0 12px; color: var(--navy); font-size: 1.16rem; letter-spacing: -.02em; }
-p { margin: 0; color: var(--muted); line-height: 1.65; }
-@media (max-width: 760px) { .why-heading { display: block; } .why-heading .section-intro { margin-top: 18px; } .why-grid { grid-template-columns: 1fr; gap: 12px; margin-top: 32px; } .why-item { padding: 24px; } h3 { margin-top: 25px; } }
+.why-section{background:#e9f3f5}.why-layout{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,8vw,120px);align-items:center}.why-intro{max-width:480px}.why-link{display:inline-flex;gap:16px;margin-top:30px;color:#087b96;font-weight:800;text-decoration:none}.why-items article{display:grid;grid-template-columns:52px 1fr;gap:20px;padding:28px 0;border-bottom:1px solid #cbdfe5}.why-items article:first-child{border-top:1px solid #cbdfe5}.why-items span{font-weight:800;color:#0b8ca5;font-size:.86rem}.why-items h3{margin:0 0 9px;color:#14394b;font-size:1.2rem;letter-spacing:-.025em}.why-items p{margin:0;color:#617985;line-height:1.7}@media(max-width:760px){.why-layout{grid-template-columns:1fr;gap:34px}}
 </style>

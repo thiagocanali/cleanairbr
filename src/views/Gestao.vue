@@ -27,12 +27,12 @@
       </section>
       <section v-if="tab==='Atendimentos'" class="panel">
         <h2>Ficha de atendimento</h2><p class="hint">Selecione um cliente e um equipamento para registrar a higienização e os testes.</p>
-        <label>Cliente<select v-model="selectedCustomerId" @change="loadEquipment"><option value="">Selecione</option><option v-for="item in customers" :key="item.id" :value="item.id">{{item.full_name}}</option></select></label>
+        <label>Cliente<select v-model="selectedCustomerId" @change="run(loadEquipment)"><option value="">Selecione</option><option v-for="item in customers" :key="item.id" :value="item.id">{{item.full_name}}</option></select></label>
         <template v-if="selectedCustomerId">
           <div class="panel-title"><h3>Equipamentos</h3><button class="small-button" @click="toggleEquipmentForm">{{editingEquipmentId?'Cancelar edição':'+ Equipamento'}}</button></div>
           <form v-if="showEquipmentForm" class="form-grid" @submit.prevent="saveEquipment"><label>Identificação *<input v-model.trim="equipment.label" required placeholder="Ex.: Ar da sala"/></label><label>Marca<input v-model.trim="equipment.brand"/></label><label>Modelo<input v-model.trim="equipment.model"/></label><button class="button-primary" :disabled="busy">{{editingEquipmentId?'Atualizar equipamento':'Salvar equipamento'}}</button></form>
           <div v-for="item in equipments" :key="item.id" class="equipment-row"><span><strong>{{item.label}}</strong><small>{{item.brand||'Sem marca'}} {{item.model||''}}</small></span><button class="small-button" @click="editEquipment(item)">Editar</button><button class="small-button danger" :disabled="busy" @click="removeEquipment(item)">Excluir</button></div>
-          <label>Equipamento<select v-model="selectedEquipmentId" @change="loadVisits"><option value="">Selecione</option><option v-for="item in equipments" :key="item.id" :value="item.id">{{item.label}} {{item.brand}}</option></select></label>
+          <label>Equipamento<select v-model="selectedEquipmentId" @change="run(loadVisits)"><option value="">Selecione</option><option v-for="item in equipments" :key="item.id" :value="item.id">{{item.label}} {{item.brand}}</option></select></label>
         </template>
         <form v-if="selectedEquipmentId" class="visit-form" @submit.prevent="saveVisit">
           <h3>Novo atendimento</h3><label>Serviço<select v-model="visit.service_type"><option value="higienizacao">Higienização</option><option value="manutencao">Manutenção</option><option value="outro">Outro serviço</option></select></label>
@@ -60,7 +60,7 @@ const tabs=['Clientes','Atendimentos','Lembretes'];
 const tab=ref('Clientes'),authenticated=ref(false),busy=ref(false),message=ref(''),email=ref(''),password=ref('');
 const customers=ref([]),search=ref(''),showCustomerForm=ref(false),editingCustomerId=ref(''),customer=reactive({full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false});
 const selectedCustomerId=ref(''),selectedEquipmentId=ref(''),equipments=ref([]),visits=ref([]),reminders=ref([]),showEquipmentForm=ref(false),editingEquipmentId=ref(''),equipment=reactive({label:'',brand:'',model:''});
-const nextYear=()=>{const date=new Date();date.setFullYear(date.getFullYear()+1);return date.toISOString().slice(0,10)};
+const nextYear=()=>{const date=new Date();date.setFullYear(date.getFullYear()+1);const y=date.getFullYear(),m=String(date.getMonth()+1).padStart(2,'0'),d=String(date.getDate()).padStart(2,'0');return `${y}-${m}-${d}`};
 const visit=reactive({service_type:'higienizacao',description:'',next_contact_on:nextYear()});
 const measure=reactive({antes:{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''},depois:{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''}});
 const velocityComparison=computed(()=>compareMeasurements(measure.antes.air_velocity_ms,measure.depois.air_velocity_ms,'m/s'));
@@ -70,8 +70,8 @@ onBeforeUnmount(()=>clearTimeout(searchTimer));
 const fail=e=>{message.value=e.message||'Ocorreu um erro.'};
 const run=async(fn)=>{busy.value=true;message.value='';try{await fn()}catch(e){fail(e)}finally{busy.value=false}};
 const refreshCustomers=async()=>{customers.value=await listCustomers(search.value)};
-const login=()=>run(async()=>{await signIn(email.value,password.value);try{await Promise.all([refreshCustomers(),refreshReminders()]);authenticated.value=true;password.value=''}catch(error){await signOut();throw error}});
-const logout=()=>run(async()=>{await signOut();authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[];selectedCustomerId.value='';selectedEquipmentId.value=''});
+const login=()=>run(async()=>{await signIn(email.value,password.value);try{await Promise.all([refreshCustomers(),refreshReminders()]);authenticated.value=true;password.value=''}catch(error){try{await signOut()}catch{}throw error}});
+const logout=()=>run(async()=>{try{await signOut()}finally{authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[];selectedCustomerId.value='';selectedEquipmentId.value='';password.value=''}});
 const debouncedSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>run(refreshCustomers),300)};
 const resetCustomer=()=>{editingCustomerId.value='';Object.assign(customer,{full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false})};
 const toggleCustomerForm=()=>{showCustomerForm.value=!showCustomerForm.value;if(!showCustomerForm.value)resetCustomer()};

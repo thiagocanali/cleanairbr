@@ -137,3 +137,44 @@ test('RPC rejeita identificador malformado mesmo com HTTP 200', async () => {
   });
   await assert.rejects(api.addVisit({equipment_id:'abc',service_type:'higienizacao'},[]),/não confirmou/);
 });
+
+test('login rejeita tempo de expiração zero', async () => {
+  globalThis.fetch = async () => ({
+    ok:true,status:200,text:async()=>JSON.stringify({
+      access_token:'token',refresh_token:'refresh',expires_in:0,
+    }),
+  });
+  await assert.rejects(api.signIn('admin@example.com','senha'),/sessão inválida/);
+  assert.equal(api.isSignedIn(),false);
+});
+
+test('refresh inválido encerra sessão sem acessar dados protegidos', async () => {
+  const originalNow=Date.now;
+  let clock=1_800_000_000_000;
+  Date.now=()=>clock;
+  try {
+    const calls=[];
+    globalThis.fetch=async (url)=>{
+      calls.push(url);
+      if(url.includes('grant_type=password')) return {
+        ok:true,status:200,text:async()=>JSON.stringify({
+          access_token:'token-inicial',refresh_token:'refresh-inicial',expires_in:120,
+        }),
+      };
+      if(url.includes('/admin_users')) return {
+        ok:true,status:200,text:async()=>JSON.stringify([{user_id:'admin'}]),
+      };
+      if(url.includes('grant_type=refresh_token')) return {
+        ok:true,status:200,text:async()=>JSON.stringify({access_token:'',expires_in:3600}),
+      };
+      throw new Error('Consulta protegida não deveria ser executada');
+    };
+    await api.signIn('admin@example.com','senha');
+    clock+=90_000;
+    await assert.rejects(api.listCustomers(),/Sessão expirada/);
+    assert.equal(api.isSignedIn(),false);
+    assert.equal(calls.filter(url=>url.includes('/customers')).length,0);
+  } finally {
+    Date.now=originalNow;
+  }
+});

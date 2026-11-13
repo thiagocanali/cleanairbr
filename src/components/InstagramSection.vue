@@ -27,7 +27,10 @@ export default {
 
 <style scoped>
 .whatsapp-button {
-  position: fixed;
+  position: static;
+  width: fit-content;
+  max-width: 100%;
+  margin: 24px auto 0;
   right: 20px;
   bottom: 20px;
   background: #25d366;

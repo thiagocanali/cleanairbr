@@ -7,7 +7,7 @@ export const configured = Boolean(url && key);
 export const isSignedIn = () => Boolean(session?.access_token);
 const request = async (path, options = {}) => {
   if (!configured) throw new Error('Configure o banco exclusivo da Clean Air antes de utilizar a gestão.');
-  const response = await fetch(url + path, {
+  if (session?.expires_at && Date.now() >= session.expires_at * 1000 - 60000 && !path.startsWith('/auth/v1/')) {\n    const refreshed = await request('/auth/v1/token?grant_type=refresh_token', {method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})});\n    session = {...refreshed,expires_at:Math.floor(Date.now()/1000)+refreshed.expires_in};\n  }\n  const response = await fetch(url + path, {
     ...options,
     headers: { apikey: key, ...(session?.access_token ? {Authorization: 'Bearer ' + session.access_token} : {}),
       'Content-Type': 'application/json', ...options.headers },
@@ -21,7 +21,7 @@ const request = async (path, options = {}) => {
 };
 export async function signIn(email, password) {
   const result = await request('/auth/v1/token?grant_type=password', {method:'POST',body:JSON.stringify({email,password})});
-  session = result;
+  session = {...result,expires_at:Math.floor(Date.now()/1000)+result.expires_in};
   try {
     const admins = await request('/rest/v1/admin_users?select=user_id&limit=1');
     if (!admins.length) throw new Error('Esta conta não está autorizada a acessar a gestão.');
@@ -35,13 +35,13 @@ export async function listCustomers(search='') {
   if (search.trim()) query.set('full_name','ilike.*'+search.trim().replace(/[*,()]/g,'')+'*');
   return request('/rest/v1/customers?'+query.toString());
 }
-export async function addCustomer(data) {
+export async function updateCustomer(id,data) {\n  const [updated] = await request('/rest/v1/customers?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});\n  if (!updated) throw new Error('Cliente não encontrado ou sem permissão.');\n  return updated;\n}\nexport async function deleteCustomer(id) {\n  const deleted = await request('/rest/v1/customers?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{Prefer:'return=representation'}});\n  if (!deleted.length) throw new Error('Cliente não encontrado ou sem permissão.');\n}\nexport async function addCustomer(data) {
   return request('/rest/v1/customers', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
 }
 export async function listEquipment(customerId) {
   return request('/rest/v1/equipment?'+new URLSearchParams({select:'*',customer_id:'eq.'+customerId,order:'created_at.desc'}));
 }
-export async function addEquipment(data) {
+export async function updateEquipment(id,data) {\n  const [updated] = await request('/rest/v1/equipment?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});\n  if (!updated) throw new Error('Equipamento não encontrado ou sem permissão.');\n  return updated;\n}\nexport async function deleteEquipment(id) {\n  const deleted = await request('/rest/v1/equipment?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{Prefer:'return=representation'}});\n  if (!deleted.length) throw new Error('Equipamento não encontrado ou sem permissão.');\n}\nexport async function addEquipment(data) {
   return request('/rest/v1/equipment', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
 }
 export async function listVisits(equipmentId) {

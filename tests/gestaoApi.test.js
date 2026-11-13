@@ -93,3 +93,21 @@ test('resposta HTTP 204 não tenta analisar JSON', async () => {
   globalThis.fetch = async () => ({ok:true,status:204});
   await assert.rejects(api.deleteCustomer('abc'),/não encontrado ou sem permissão/);
 });
+
+test('erro 401 em consulta invalida a sessão em memória', async () => {
+  globalThis.fetch = async (url) => {
+    if (url.includes('/auth/v1/token')) return {
+      ok:true,status:200,text:async()=>JSON.stringify({
+        access_token:'token-temporario',refresh_token:'refresh-temporario',expires_in:3600,
+      }),
+    };
+    if (url.includes('/rest/v1/admin_users')) return {
+      ok:true,status:200,text:async()=>JSON.stringify([{user_id:'admin'}]),
+    };
+    return {ok:false,status:401,json:async()=>({message:'JWT expired'})};
+  };
+  await api.signIn('admin@example.com','senha-teste');
+  assert.equal(api.isSignedIn(),true);
+  await assert.rejects(api.listCustomers(),/JWT expired/);
+  assert.equal(api.isSignedIn(),false);
+});

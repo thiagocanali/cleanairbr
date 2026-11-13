@@ -83,6 +83,12 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - Tentativa de checkout para execução local falhou por DNS (`Could not resolve host: github.com`). **Nenhum build ou teste foi executado com sucesso nesta etapa.**
 - Validação visual, CI, testes reais de RLS e banco exclusivo continuam pendentes.
 
+## Integridade e sessão — 13/11/2026
+- `database/002_atomic_service_visit.sql` rejeita duas medições com a mesma fase; transação deve reverter por completo quando houver falha.
+- `Gestao.vue` impede submissões simultâneas, valida nome e identificação e limpa a UI quando a sessão é invalidada por 401.
+- Adicionado teste de contrato para invalidação da sessão após HTTP 401.
+- **Pendente:** execução de testes e build no CI; implantação SQL e testes reais em Supabase dedicado. Nenhum merge/deploy foi realizado.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

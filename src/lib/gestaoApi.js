@@ -48,12 +48,17 @@ export async function listVisits(equipmentId) {
   return request('/rest/v1/service_visits?'+new URLSearchParams({select:'*,measurements(*)',equipment_id:'eq.'+equipmentId,order:'performed_at.desc'}));
 }
 export async function addVisit(data, measurements) {
-  const [visit] = await request('/rest/v1/service_visits',{method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
-  if (measurements.length) {
-    try { await request('/rest/v1/measurements',{method:'POST',body:JSON.stringify(measurements.map(m=>({...m,visit_id:visit.id})))}); }
-    catch (error) { throw new Error('Atendimento salvo, mas houve erro nas medições: '+error.message); }
-  }
-  return visit;
+  const visitId = await request('/rest/v1/rpc/create_service_visit', {
+    method:'POST',
+    body:JSON.stringify({
+      p_equipment_id:data.equipment_id,
+      p_service_type:data.service_type,
+      p_description:data.description||null,
+      p_next_contact_on:data.next_contact_on||null,
+      p_measurements:measurements,
+    }),
+  });
+  return {id:visitId};
 }
 export async function listReminders() {
   return request('/rest/v1/reminders?'+new URLSearchParams({select:'id,due_on,status,customer_id,customers(full_name,phone,preferred_contact,contact_consent),equipment(label)',status:'eq.pendente',order:'due_on.asc',limit:'100'}));

@@ -51,3 +51,45 @@ test('conclusão de lembrete exige registro alterado', async () => {
   globalThis.fetch = async () => ({ok:true,status:200,text:async()=>JSON.stringify([])});
   await assert.rejects(api.completeReminder('abc'),/não encontrado ou sem permissão/);
 });
+
+test('login de conta não autorizada não mantém sessão', async () => {
+  const calls=[];
+  globalThis.fetch = async (url,options) => {
+    calls.push({url,options});
+    if (url.includes('/auth/v1/token')) return {
+      ok:true,status:200,text:async()=>JSON.stringify({
+        access_token:'token-temporario',refresh_token:'refresh-temporario',expires_in:3600,
+      }),
+    };
+    if (url.includes('/rest/v1/admin_users')) return {
+      ok:true,status:200,text:async()=>JSON.stringify([]),
+    };
+    throw new Error('Requisição inesperada');
+  };
+  await assert.rejects(api.signIn('teste@example.com','senha-teste'),/não está autorizada/);
+  assert.equal(api.isSignedIn(),false);
+  assert.equal(calls.length,2);
+});
+
+test('logout limpa sessão mesmo quando endpoint remoto falha', async () => {
+  globalThis.fetch = async (url) => {
+    if (url.includes('/auth/v1/token')) return {
+      ok:true,status:200,text:async()=>JSON.stringify({
+        access_token:'token-temporario',refresh_token:'refresh-temporario',expires_in:3600,
+      }),
+    };
+    if (url.includes('/rest/v1/admin_users')) return {
+      ok:true,status:200,text:async()=>JSON.stringify([{user_id:'admin'}]),
+    };
+    return {ok:false,status:503,json:async()=>({message:'Serviço indisponível'})};
+  };
+  await api.signIn('admin@example.com','senha-teste');
+  assert.equal(api.isSignedIn(),true);
+  await assert.rejects(api.signOut(),/Serviço indisponível/);
+  assert.equal(api.isSignedIn(),false);
+});
+
+test('resposta HTTP 204 não tenta analisar JSON', async () => {
+  globalThis.fetch = async () => ({ok:true,status:204});
+  await assert.rejects(api.deleteCustomer('abc'),/não encontrado ou sem permissão|Cannot read/);
+});

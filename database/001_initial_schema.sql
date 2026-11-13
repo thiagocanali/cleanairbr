@@ -71,7 +71,7 @@ create table public.reminders (
   notes text,
   created_at timestamptz not null default now(),
   foreign key (equipment_id, customer_id) references public.equipment(id, customer_id) on delete cascade,
-  foreign key (visit_id, equipment_id) references public.service_visits(id, equipment_id)
+  foreign key (visit_id, equipment_id) references public.service_visits(id, equipment_id) on delete cascade
 );
 
 create index equipment_customer_idx on public.equipment(customer_id);

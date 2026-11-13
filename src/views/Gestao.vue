@@ -31,6 +31,7 @@
         <template v-if="selectedCustomerId">
           <div class="panel-title"><h3>Equipamentos</h3><button class="small-button" @click="toggleEquipmentForm">{{editingEquipmentId?'Cancelar edição':'+ Equipamento'}}</button></div>
           <form v-if="showEquipmentForm" class="form-grid" @submit.prevent="saveEquipment"><label>Identificação *<input v-model.trim="equipment.label" required placeholder="Ex.: Ar da sala"/></label><label>Marca<input v-model.trim="equipment.brand"/></label><label>Modelo<input v-model.trim="equipment.model"/></label><button class="button-primary" :disabled="busy">{{editingEquipmentId?'Atualizar equipamento':'Salvar equipamento'}}</button></form>
+          <div v-for="item in equipments" :key="item.id" class="equipment-row"><span><strong>{{item.label}}</strong><small>{{item.brand||'Sem marca'}} {{item.model||''}}</small></span><button class="small-button" @click="editEquipment(item)">Editar</button><button class="small-button danger" :disabled="busy" @click="removeEquipment(item)">Excluir</button></div>
           <label>Equipamento<select v-model="selectedEquipmentId" @change="loadVisits"><option value="">Selecione</option><option v-for="item in equipments" :key="item.id" :value="item.id">{{item.label}} {{item.brand}}</option></select></label>
         </template>
         <form v-if="selectedEquipmentId" class="visit-form" @submit.prevent="saveVisit">

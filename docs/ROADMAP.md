@@ -1,3 +1,9 @@
+## Confirmação de persistência — 13/11/2026
+- Criação de cliente e equipamento só é considerada confirmada quando a API retorna um registro com ID.
+- Erros de resposta vazia orientam conferir a lista antes de repetir a operação, evitando duplicidade.
+- Adicionados testes simulados de criação confirmada e sem confirmação.
+- **Não homologado:** testes automatizados e integração com banco dedicado ainda pendentes.
+
 # Roadmap — Clean Air (12/11/2026)
 
 > Fonte de acompanhamento: checklist versionado no GitHub. Os estados abaixo são de implementação no código, **não** de homologação em produção.

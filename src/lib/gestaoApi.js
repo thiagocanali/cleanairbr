@@ -89,6 +89,9 @@ export async function addVisit(data, measurements) {
       p_measurements:measurements,
     }),
   });
+  if (typeof visitId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(visitId)) {
+    throw new Error('O servidor não confirmou o identificador do atendimento. Consulte o histórico antes de tentar novamente.');
+  }
   return {id:visitId};
 }
 export async function listReminders() {

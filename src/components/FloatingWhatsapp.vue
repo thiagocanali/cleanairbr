@@ -16,7 +16,7 @@ export default {
   name: "FloatingWhatsapp",
   computed: {
     showButton() {
-      return !["admin", "clients", "equipment"].includes(this.$route.name);
+      return !["/admin", "/clients", "/equipment", "/gestao"].some(\n        (prefix) => this.$route.path === prefix || this.$route.path.startsWith(prefix + "/")\n      ) && !this.$route.meta.private;
     },
   },
 };
@@ -25,8 +25,8 @@ export default {
 <style>
 .whatsapp-button {
   position: fixed;
-  right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
+  right: calc(16px + env(safe-area-inset-right, 0px));
+  bottom: calc(16px + env(safe-area-inset-bottom, 0px));
   width: 56px;
   height: 56px;
   background: #25d366;
@@ -36,7 +36,7 @@ export default {
   align-items: center;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
   cursor: pointer;
-  animation: float 3s ease-in-out infinite;
+  animation: none;
   z-index: 30;
 }
 

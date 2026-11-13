@@ -111,3 +111,14 @@ test('erro 401 em consulta invalida a sessão em memória', async () => {
   await assert.rejects(api.listCustomers(),/JWT expired/);
   assert.equal(api.isSignedIn(),false);
 });
+
+test('PATCH sem corpo retorna erro de negócio em vez de TypeError', async () => {
+  globalThis.fetch = async () => ({ok:true,status:204});
+  await assert.rejects(api.updateCustomer('abc',{full_name:'Teste'}),/Cliente não encontrado ou sem permissão/);
+  await assert.rejects(api.updateEquipment('abc',{label:'Sala'}),/Equipamento não encontrado ou sem permissão/);
+});
+
+test('RPC sem data de retorno não é confundida com atendimento salvo', async () => {
+  globalThis.fetch = async () => ({ok:true,status:204});
+  await assert.rejects(api.addVisit({equipment_id:'abc',service_type:'higienizacao'},[]),/não confirmou/);
+});

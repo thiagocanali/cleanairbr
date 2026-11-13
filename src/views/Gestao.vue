@@ -76,7 +76,7 @@ const resetCustomer=()=>{editingCustomerId.value='';Object.assign(customer,{full
 const toggleCustomerForm=()=>{showCustomerForm.value=!showCustomerForm.value;if(!showCustomerForm.value)resetCustomer()};
 const editCustomer=item=>{editingCustomerId.value=item.id;Object.assign(customer,{full_name:item.full_name,phone:item.phone||'',email:item.email||'',preferred_contact:item.preferred_contact,contact_consent:item.contact_consent});showCustomerForm.value=true};
 const saveCustomer=()=>run(async()=>{
- const phone=customer.phone.replace(/\\D/g,'');
+ const phone=customer.phone.replace(/\D/g,'');
  if(phone && (phone.length<10||phone.length>13)) throw new Error('Informe um telefone válido com DDD.');
  const payload={...customer,full_name:customer.full_name.trim(),email:customer.email||null,phone:phone||null};
  if(editingCustomerId.value) await updateCustomer(editingCustomerId.value,payload); else await addCustomer(payload);

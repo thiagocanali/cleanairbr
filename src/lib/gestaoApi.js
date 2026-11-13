@@ -61,7 +61,9 @@ export async function deleteCustomer(id) {
   if (!deleted?.length) throw new Error('Cliente não encontrado ou sem permissão.');
 }
 export async function addCustomer(data) {
-  return request('/rest/v1/customers', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const rows = await request('/rest/v1/customers', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  if (!rows?.[0]?.id) throw new Error('O servidor não confirmou o cadastro do cliente. Consulte a lista antes de tentar novamente.');
+  return rows[0];
 }
 export async function listEquipment(customerId) {
   return request('/rest/v1/equipment?'+new URLSearchParams({select:'*',customer_id:'eq.'+customerId,order:'created_at.desc'}));
@@ -77,7 +79,9 @@ export async function deleteEquipment(id) {
   if (!deleted?.length) throw new Error('Equipamento não encontrado ou sem permissão.');
 }
 export async function addEquipment(data) {
-  return request('/rest/v1/equipment', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const rows = await request('/rest/v1/equipment', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  if (!rows?.[0]?.id) throw new Error('O servidor não confirmou o cadastro do equipamento. Consulte a lista antes de tentar novamente.');
+  return rows[0];
 }
 export async function listVisits(equipmentId) {
   return request('/rest/v1/service_visits?'+new URLSearchParams({select:'*,measurements(*)',equipment_id:'eq.'+equipmentId,order:'performed_at.desc'}));

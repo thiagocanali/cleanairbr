@@ -55,7 +55,7 @@
 <script setup>
 import {ref,reactive,computed,onBeforeUnmount} from 'vue';
 import {compareMeasurements,formatDifference} from '../lib/measurements.js';
-import {configured,signIn,signOut,listCustomers,addCustomer,updateCustomer,deleteCustomer,listEquipment,addEquipment,updateEquipment,deleteEquipment,listVisits,addVisit,listReminders,completeReminder} from '../lib/gestaoApi.js';
+import {configured,isSignedIn,signIn,signOut,listCustomers,addCustomer,updateCustomer,deleteCustomer,listEquipment,addEquipment,updateEquipment,deleteEquipment,listVisits,addVisit,listReminders,completeReminder} from '../lib/gestaoApi.js';
 const tabs=['Clientes','Atendimentos','Lembretes'];
 const tab=ref('Clientes'),authenticated=ref(false),busy=ref(false),message=ref(''),email=ref(''),password=ref('');
 const customers=ref([]),search=ref(''),showCustomerForm=ref(false),editingCustomerId=ref(''),customer=reactive({full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false});
@@ -68,7 +68,7 @@ const temperatureComparison=computed(()=>compareMeasurements(measure.antes.outle
 let searchTimer;
 onBeforeUnmount(()=>clearTimeout(searchTimer));
 const fail=e=>{message.value=e.message||'Ocorreu um erro.'};
-const run=async(fn)=>{busy.value=true;message.value='';try{await fn()}catch(e){fail(e)}finally{busy.value=false}};
+const run=async(fn)=>{if(busy.value)return;busy.value=true;message.value='';try{await fn()}catch(e){fail(e);if(!isSignedIn()){authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[]}}finally{busy.value=false}};
 const refreshCustomers=async()=>{customers.value=await listCustomers(search.value)};
 const login=()=>run(async()=>{await signIn(email.value,password.value);try{await Promise.all([refreshCustomers(),refreshReminders()]);authenticated.value=true;password.value=''}catch(error){try{await signOut()}catch{}throw error}});
 const logout=()=>run(async()=>{try{await signOut()}finally{authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[];selectedCustomerId.value='';selectedEquipmentId.value='';password.value=''}});
@@ -77,6 +77,7 @@ const resetCustomer=()=>{editingCustomerId.value='';Object.assign(customer,{full
 const toggleCustomerForm=()=>{showCustomerForm.value=!showCustomerForm.value;if(!showCustomerForm.value)resetCustomer()};
 const editCustomer=item=>{editingCustomerId.value=item.id;Object.assign(customer,{full_name:item.full_name,phone:item.phone||'',email:item.email||'',preferred_contact:item.preferred_contact,contact_consent:item.contact_consent});showCustomerForm.value=true};
 const saveCustomer=()=>run(async()=>{
+ if(!customer.full_name.trim()) throw new Error('Informe o nome do cliente.');
  const phone=customer.phone.replace(/\D/g,'');
  if(phone && (phone.length<10||phone.length>13)) throw new Error('Informe um telefone válido com DDD.');
  const payload={...customer,full_name:customer.full_name.trim(),email:customer.email||null,phone:phone||null};
@@ -93,6 +94,7 @@ const resetEquipment=()=>{editingEquipmentId.value='';Object.assign(equipment,{l
 const toggleEquipmentForm=()=>{if(showEquipmentForm.value){showEquipmentForm.value=false;resetEquipment()}else showEquipmentForm.value=true};
 const editEquipment=item=>{editingEquipmentId.value=item.id;Object.assign(equipment,{label:item.label,brand:item.brand||'',model:item.model||''});showEquipmentForm.value=true};
 const saveEquipment=()=>run(async()=>{
+ if(!equipment.label.trim()) throw new Error('Informe a identificação do equipamento.');
  const payload={...equipment,customer_id:selectedCustomerId.value,brand:equipment.brand||null,model:equipment.model||null};
  if(editingEquipmentId.value) await updateEquipment(editingEquipmentId.value,payload); else await addEquipment(payload);
  resetEquipment();showEquipmentForm.value=false;await loadEquipment();message.value='Equipamento salvo.';

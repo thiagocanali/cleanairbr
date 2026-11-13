@@ -75,6 +75,14 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - **Validação pendente:** testes ainda não executados no CI; não confundir testes simulados com testes reais de autenticação/RLS no Supabase.
 - Ambiente local desta sessão não possui acesso de rede ao GitHub para checkout e execução integral do build. Não foi realizado deploy.
 
+## Robustez do frontend — 13/11/2026
+- Corrigido logout: mesmo se a API de revogação falhar, o painel limpa dados da sessão na interface.
+- Tratamento de erros de consulta de equipamentos e atendimentos ao trocar seletores.
+- Datas de lembrete calculadas pelo calendário local, sem conversão UTC.
+- Resposta 401 invalida sessão em memória no cliente.
+- Tentativa de checkout para execução local falhou por DNS (`Could not resolve host: github.com`). **Nenhum build ou teste foi executado com sucesso nesta etapa.**
+- Validação visual, CI, testes reais de RLS e banco exclusivo continuam pendentes.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

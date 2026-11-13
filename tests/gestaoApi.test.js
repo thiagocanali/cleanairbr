@@ -217,3 +217,22 @@ test('renovação não envia bearer antigo e usa token renovado na consulta', as
     await api.signOut().catch(()=>{});
   }
 });
+
+test('cadastros exigem confirmação de ID retornado pelo servidor', async () => {
+  globalThis.fetch=async()=>({ok:true,status:200,text:async()=>JSON.stringify([])});
+  await assert.rejects(api.addCustomer({full_name:'Cliente'}),/não confirmou o cadastro do cliente/);
+  await assert.rejects(api.addEquipment({customer_id:'id',label:'Sala'}),/não confirmou o cadastro do equipamento/);
+});
+
+test('cadastros confirmados retornam identificador persistido', async () => {
+  const calls=[];
+  globalThis.fetch=async (url,options)=>{
+    calls.push({url,options});
+    return {ok:true,status:201,text:async()=>JSON.stringify([{id:'id-confirmado'}])};
+  };
+  assert.equal((await api.addCustomer({full_name:'Cliente'})).id,'id-confirmado');
+  assert.equal((await api.addEquipment({customer_id:'id',label:'Sala'})).id,'id-confirmado');
+  assert.equal(calls.length,2);
+  assert.equal(calls[0].options.headers.Prefer,'return=representation');
+  assert.equal(calls[1].options.headers.Prefer,'return=representation');
+});

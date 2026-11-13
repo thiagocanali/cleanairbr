@@ -1,5 +1,5 @@
 <template>
-<main class="gestao">
+<div class="gestao">
   <div class="gestao-inner">
     <div class="heading"><div><p class="section-label">Área privada</p><h1>Clean Air <span>Gestão</span></h1><p>Seu caderno digital de clientes e atendimentos.</p></div><button v-if="authenticated" class="small-button" @click="logout">Sair da conta</button></div>
     <div v-if="!configured" class="notice" role="status"><strong>Configuração pendente.</strong> O sistema ainda não está conectado a um banco exclusivo da Clean Air. Nenhum dado de cliente deve ser inserido nesta etapa.</div>
@@ -50,7 +50,7 @@
     </template>
     <p v-if="message" class="feedback" role="status">{{message}}</p>
   </div>
-</main>
+</div>
 </template>
 <script setup>
 import {ref,reactive,computed,onBeforeUnmount} from 'vue';

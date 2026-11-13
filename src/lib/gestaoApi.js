@@ -46,7 +46,8 @@ export async function listCustomers(search='') {
   return request('/rest/v1/customers?'+query.toString());
 }
 export async function updateCustomer(id,data) {
-  const [updated] = await request('/rest/v1/customers?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const updatedRows = await request('/rest/v1/customers?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const updated = updatedRows?.[0];
   if (!updated) throw new Error('Cliente não encontrado ou sem permissão.');
   return updated;
 }
@@ -61,7 +62,8 @@ export async function listEquipment(customerId) {
   return request('/rest/v1/equipment?'+new URLSearchParams({select:'*',customer_id:'eq.'+customerId,order:'created_at.desc'}));
 }
 export async function updateEquipment(id,data) {
-  const [updated] = await request('/rest/v1/equipment?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const updatedRows = await request('/rest/v1/equipment?id=eq.'+encodeURIComponent(id),{method:'PATCH',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
+  const updated = updatedRows?.[0];
   if (!updated) throw new Error('Equipamento não encontrado ou sem permissão.');
   return updated;
 }

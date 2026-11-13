@@ -36,7 +36,8 @@ export async function signIn(email, password) {
   } catch (error) { session = null; throw error; }
 }
 export async function signOut() {
-  try { if (session) await request('/auth/v1/logout', {method:'POST'}); } finally { session = null; }
+  try { if (session) await request('/auth/v1/logout', {method:'POST'}); }
+  finally { session = null; }
 }
 export async function listCustomers(search='') {
   const query = new URLSearchParams({select:'id,full_name,phone,email,preferred_contact,contact_consent,created_at',order:'full_name.asc',limit:'100'});
@@ -94,6 +95,4 @@ export async function completeReminder(id) {
   if (!updated?.length) throw new Error('Lembrete não encontrado ou sem permissão.');
   return updated[0];
 }
-export async function addReminder(data) {
-  return request('/rest/v1/reminders',{method:'POST',body:JSON.stringify(data)});
-}
+

@@ -89,6 +89,14 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - Adicionado teste de contrato para invalidação da sessão após HTTP 401.
 - **Pendente:** execução de testes e build no CI; implantação SQL e testes reais em Supabase dedicado. Nenhum merge/deploy foi realizado.
 
+## Tratamento de falhas parciais — 13/11/2026
+- A gravação de atendimento agora informa sucesso mesmo se a atualização posterior do histórico falhar, evitando confusão entre falha de leitura e falha de escrita.
+- Medições numéricas inválidas são rejeitadas antes da chamada RPC.
+- `updateCustomer` e `updateEquipment` tratam resposta HTTP 204 sem gerar `TypeError`.
+- A criação de atendimento exige UUID retornado pela RPC; se faltar confirmação, orienta consultar o histórico antes de repetir, reduzindo duplicações.
+- Adicionados testes de contrato para respostas vazias; **execução não confirmada**.
+- Próximas tarefas em ordem: (1) obter execução CI `npm test` + `npm run build`; (2) corrigir falhas de CI; (3) provisionar Supabase dedicado; (4) aplicar SQL 001/002 e testar rollback/RLS; (5) testar CRUD e UX mobile; (6) avaliar integração seletiva da PR #3; (7) homologar PR #2, sem merge/deploy automático.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

@@ -178,3 +178,42 @@ test('refresh inválido encerra sessão sem acessar dados protegidos', async () 
     Date.now=originalNow;
   }
 });
+
+test('renovação não envia bearer antigo e usa token renovado na consulta', async () => {
+  const originalNow=Date.now;
+  let clock=1_800_000_000_000;
+  Date.now=()=>clock;
+  try {
+    const calls=[];
+    globalThis.fetch=async (url,options)=>{
+      calls.push({url,options});
+      if(url.includes('grant_type=password')) return {
+        ok:true,status:200,text:async()=>JSON.stringify({
+          access_token:'token-inicial',refresh_token:'refresh-inicial',expires_in:120,
+        }),
+      };
+      if(url.includes('/admin_users')) return {
+        ok:true,status:200,text:async()=>JSON.stringify([{user_id:'admin'}]),
+      };
+      if(url.includes('grant_type=refresh_token')) return {
+        ok:true,status:200,text:async()=>JSON.stringify({
+          access_token:'token-renovado',refresh_token:'refresh-renovado',expires_in:3600,
+        }),
+      };
+      if(url.includes('/customers')) return {
+        ok:true,status:200,text:async()=>JSON.stringify([]),
+      };
+      throw new Error('Rota inesperada');
+    };
+    await api.signIn('admin@example.com','senha');
+    clock+=90_000;
+    await api.listCustomers();
+    const refresh=calls.find(call=>call.url.includes('grant_type=refresh_token'));
+    const customers=calls.find(call=>call.url.includes('/customers'));
+    assert.equal(refresh.options.headers.Authorization,undefined);
+    assert.equal(customers.options.headers.Authorization,'Bearer token-renovado');
+  } finally {
+    Date.now=originalNow;
+    await api.signOut().catch(()=>{});
+  }
+});

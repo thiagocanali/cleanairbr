@@ -55,6 +55,12 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - CI: workflow configurado, mas ainda sem evidência de execução bem-sucedida nesta auditoria.
 - Não utilizar dados reais até concluir CA-004, CA-005, CA-007 e CA-010.
 
+## Implementação incremental — 13/11/2026
+- Adicionada `database/002_atomic_service_visit.sql` com função `public.create_service_visit` (SECURITY INVOKER) para inserir atendimento, até duas medições e lembrete na mesma transação.
+- `src/lib/gestaoApi.js` agora chama a RPC; `src/views/Gestao.vue` não duplica o lembrete.
+- A RPC depende da aplicação sequencial dos scripts 001 e 002 em um projeto exclusivo; sem banco disponível, não há teste de integração ou verificação de RLS.
+- Critério de aceite pendente: transação deve reverter completamente quando uma medição for inválida, usuário não autorizado deve receber erro de permissão, e um atendimento válido deve gerar um único lembrete.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

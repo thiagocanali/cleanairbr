@@ -18,6 +18,7 @@ declare
   v_customer_id uuid;
   v_measure jsonb;
   v_phase text;
+  v_seen_phases text[] := array[]::text[];
 begin
   if (select auth.uid()) is null or not exists (
     select 1 from public.admin_users where user_id = (select auth.uid())
@@ -49,6 +50,10 @@ begin
     if v_phase not in ('antes','depois') or v_phase is null then
       raise exception 'Fase da medição inválida' using errcode = '22023';
     end if;
+    if v_phase = any(v_seen_phases) then
+      raise exception 'Medição duplicada para a mesma fase' using errcode = '22023';
+    end if;
+    v_seen_phases := array_append(v_seen_phases, v_phase);
     insert into public.measurements (
       visit_id, phase, air_velocity_ms, outlet_temperature_c, test_conditions
     ) values (

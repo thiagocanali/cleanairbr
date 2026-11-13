@@ -97,6 +97,13 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - Adicionados testes de contrato para respostas vazias; **execução não confirmada**.
 - Próximas tarefas em ordem: (1) obter execução CI `npm test` + `npm run build`; (2) corrigir falhas de CI; (3) provisionar Supabase dedicado; (4) aplicar SQL 001/002 e testar rollback/RLS; (5) testar CRUD e UX mobile; (6) avaliar integração seletiva da PR #3; (7) homologar PR #2, sem merge/deploy automático.
 
+## Validação de respostas de autenticação e RPC — 13/11/2026
+- Login rejeita resposta sem `access_token`, `refresh_token` ou duração de sessão válida.
+- Criação de atendimento exige UUID em formato válido antes de confirmar o resultado.
+- Testes simulados adicionados para ambos os cenários.
+- Consulta de workflows do commit `4f2dc30580c67c6a287d4161f40a3bd42cc4e9ef`: nenhuma execução retornada. Isso **não comprova** sucesso ou falha da suíte.
+- **Próximos passos:** obter execução CI e logs; provisionar banco dedicado; testar RLS e RPC com transações; homologar interface mobile e CRUD; revisar PR #3; somente depois considerar merge.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

@@ -122,3 +122,18 @@ test('RPC sem data de retorno não é confundida com atendimento salvo', async (
   globalThis.fetch = async () => ({ok:true,status:204});
   await assert.rejects(api.addVisit({equipment_id:'abc',service_type:'higienizacao'},[]),/não confirmou/);
 });
+
+test('login rejeita resposta de autenticação sem tokens', async () => {
+  globalThis.fetch = async () => ({
+    ok:true,status:200,text:async()=>JSON.stringify({access_token:'',expires_in:3600}),
+  });
+  await assert.rejects(api.signIn('admin@example.com','senha-teste'),/sessão inválida/);
+  assert.equal(api.isSignedIn(),false);
+});
+
+test('RPC rejeita identificador malformado mesmo com HTTP 200', async () => {
+  globalThis.fetch = async () => ({
+    ok:true,status:200,text:async()=>JSON.stringify('não-é-uuid'),
+  });
+  await assert.rejects(api.addVisit({equipment_id:'abc',service_type:'higienizacao'},[]),/não confirmou/);
+});

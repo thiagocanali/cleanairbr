@@ -45,6 +45,16 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - [ ] CA-025 — Testes automatizados, validação em ambiente de homologação e teste com o proprietário.
 - [ ] CA-026 — Deploy de produção com configuração de ambiente, monitoramento e documentação operacional.
 
+## Auditoria de integração — 13/11/2026
+- PR #2 (`feat/redesign-clean-air-2026`): redesign, SQL inicial, tela `/gestao` com CRUD inicial de clientes/equipamentos, atendimentos e lembretes. **Código não homologado em produção.**
+- PR #3 (`v0/checkup-cleanair`): dashboard `/admin`, `/clients` e `/equipment` com fixtures estáticas e salvamento somente em memória. Melhorias de UX e botão flutuante devem ser portadas seletivamente, sem tornar fixtures operacionais.
+- As branches divergem; merge automático pode sobrescrever componentes de layout e rotas. Não foi realizado merge em `main`.
+- Supabase: dois projetos ativos na organização; nenhum banco exclusivo Clean Air disponível. Criar terceiro projeto gratuito retorna erro de cota. Não pausar projetos nem usar outro banco sem autorização.
+- Auth: login via API e allowlist, token renovável em memória; sessão é perdida ao recarregar. MFA e testes RLS pendentes.
+- Integridade: criação de atendimento e medições ocorre em requisições separadas; requer transação no servidor/RPC antes de produção para evitar gravação parcial.
+- CI: workflow configurado, mas ainda sem evidência de execução bem-sucedida nesta auditoria.
+- Não utilizar dados reais até concluir CA-004, CA-005, CA-007 e CA-010.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

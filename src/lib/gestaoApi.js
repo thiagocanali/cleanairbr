@@ -30,10 +30,11 @@ const request = async (path, options = {}) => {
 };
 export async function signIn(email, password) {
   const result = await request('/auth/v1/token?grant_type=password', {method:'POST',body:JSON.stringify({email,password})});
-  session = {...result,expires_at:Math.floor(Date.now()/1000)+result.expires_in};
+  if (!result?.access_token || !result?.refresh_token || !Number.isFinite(Number(result.expires_in))) throw new Error('O servidor retornou uma sessão inválida.');
+  session = {...result,expires_at:Math.floor(Date.now()/1000)+Number(result.expires_in)};
   try {
     const admins = await request('/rest/v1/admin_users?select=user_id&limit=1');
-    if (!admins.length) throw new Error('Esta conta não está autorizada a acessar a gestão.');
+    if (!Array.isArray(admins) || admins.length === 0) throw new Error('Esta conta não está autorizada a acessar a gestão.');
   } catch (error) { session = null; throw error; }
 }
 export async function signOut() {

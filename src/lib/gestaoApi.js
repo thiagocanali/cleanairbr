@@ -12,7 +12,11 @@ const request = async (path, options = {}) => {
     let refreshed;
     try { refreshed = await request('/auth/v1/token?grant_type=refresh_token', {method:'POST',body:JSON.stringify({refresh_token:session.refresh_token})}); }
     catch (error) { session = null; throw new Error('Sessão expirada. Entre novamente.'); }
-    session = {...refreshed,expires_at:Math.floor(Date.now()/1000)+refreshed.expires_in};
+    if (!refreshed?.access_token || !refreshed?.refresh_token || !(Number(refreshed.expires_in) > 0)) {
+      session = null;
+      throw new Error('Sessão expirada. Entre novamente.');
+    }
+    session = {...refreshed,expires_at:Math.floor(Date.now()/1000)+Number(refreshed.expires_in)};
   }
   const response = await fetch(url + path, {
     ...options,
@@ -30,7 +34,7 @@ const request = async (path, options = {}) => {
 };
 export async function signIn(email, password) {
   const result = await request('/auth/v1/token?grant_type=password', {method:'POST',body:JSON.stringify({email,password})});
-  if (!result?.access_token || !result?.refresh_token || !Number.isFinite(Number(result.expires_in))) throw new Error('O servidor retornou uma sessão inválida.');
+  if (!result?.access_token || !result?.refresh_token || !(Number(result.expires_in) > 0)) throw new Error('O servidor retornou uma sessão inválida.');
   session = {...result,expires_at:Math.floor(Date.now()/1000)+Number(result.expires_in)};
   try {
     const admins = await request('/rest/v1/admin_users?select=user_id&limit=1');

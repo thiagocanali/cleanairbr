@@ -91,5 +91,5 @@ test('logout limpa sessão mesmo quando endpoint remoto falha', async () => {
 
 test('resposta HTTP 204 não tenta analisar JSON', async () => {
   globalThis.fetch = async () => ({ok:true,status:204});
-  await assert.rejects(api.deleteCustomer('abc'),/não encontrado ou sem permissão|Cannot read/);
+  await assert.rejects(api.deleteCustomer('abc'),/não encontrado ou sem permissão/);
 });

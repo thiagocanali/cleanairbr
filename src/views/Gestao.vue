@@ -105,10 +105,15 @@ const removeEquipment=item=>{
 };
 const loadVisits=async()=>{visits.value=selectedEquipmentId.value?await listVisits(selectedEquipmentId.value):[]};
 const saveVisit=()=>run(async()=>{
+ const equipmentId=selectedEquipmentId.value;
+ if(!equipmentId) throw new Error('Selecione um equipamento.');
  const measurements=['antes','depois'].filter(p=>measure[p].air_velocity_ms!==''||measure[p].outlet_temperature_c!=='').map(phase=>({phase,air_velocity_ms:measure[phase].air_velocity_ms===''?null:Number(measure[phase].air_velocity_ms),outlet_temperature_c:measure[phase].outlet_temperature_c===''?null:Number(measure[phase].outlet_temperature_c),test_conditions:measure[phase].test_conditions||null}));
  const next=visit.next_contact_on;
- await addVisit({equipment_id:selectedEquipmentId.value,service_type:visit.service_type,description:visit.description||null,next_contact_on:next||null},measurements);
- Object.assign(visit,{service_type:'higienizacao',description:'',next_contact_on:nextYear()});for(const phase of ['antes','depois'])Object.assign(measure[phase],{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''});await Promise.all([loadVisits(),refreshReminders()]);message.value='Atendimento, medições e lembrete salvos.';
+ if(measurements.some(m=>(m.air_velocity_ms!==null&&!Number.isFinite(m.air_velocity_ms))||(m.outlet_temperature_c!==null&&!Number.isFinite(m.outlet_temperature_c)))) throw new Error('Informe medições numéricas válidas.');
+ await addVisit({equipment_id:equipmentId,service_type:visit.service_type,description:visit.description||null,next_contact_on:next||null},measurements);
+ Object.assign(visit,{service_type:'higienizacao',description:'',next_contact_on:nextYear()});for(const phase of ['antes','depois'])Object.assign(measure[phase],{air_velocity_ms:'',outlet_temperature_c:'',test_conditions:''});
+ message.value=next?'Atendimento, medições e lembrete salvos.':'Atendimento e medições salvos.';
+ try {await Promise.all([loadVisits(),refreshReminders()])}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}
 });
 const refreshReminders=async()=>{reminders.value=await listReminders()};
 const markReminder=id=>run(async()=>{await completeReminder(id);await refreshReminders();message.value='Contato registrado.'});

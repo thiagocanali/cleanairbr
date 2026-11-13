@@ -51,7 +51,7 @@ export async function updateCustomer(id,data) {
 }
 export async function deleteCustomer(id) {
   const deleted = await request('/rest/v1/customers?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{Prefer:'return=representation'}});
-  if (!deleted.length) throw new Error('Cliente não encontrado ou sem permissão.');
+  if (!deleted?.length) throw new Error('Cliente não encontrado ou sem permissão.');
 }
 export async function addCustomer(data) {
   return request('/rest/v1/customers', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});
@@ -66,7 +66,7 @@ export async function updateEquipment(id,data) {
 }
 export async function deleteEquipment(id) {
   const deleted = await request('/rest/v1/equipment?id=eq.'+encodeURIComponent(id),{method:'DELETE',headers:{Prefer:'return=representation'}});
-  if (!deleted.length) throw new Error('Equipamento não encontrado ou sem permissão.');
+  if (!deleted?.length) throw new Error('Equipamento não encontrado ou sem permissão.');
 }
 export async function addEquipment(data) {
   return request('/rest/v1/equipment', {method:'POST',headers:{Prefer:'return=representation'},body:JSON.stringify(data)});

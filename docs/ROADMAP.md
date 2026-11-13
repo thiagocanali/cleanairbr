@@ -1,3 +1,9 @@
+## Lembretes e integridade referencial — 13/11/2026
+- Link de WhatsApp passa a adicionar DDI 55 a números brasileiros sem prefixo internacional.
+- A FK `reminders(visit_id,equipment_id)` recebeu `ON DELETE CASCADE` no esquema inicial, para excluir lembretes quando um atendimento for removido.
+- **Atenção:** alteração de esquema apenas no arquivo `database/001_initial_schema.sql`; banco ainda não provisionado. Se já houver implantação em algum ambiente, será necessária migration específica de alteração de constraint, não reaplicação do SQL inicial.
+- Próxima validação: testar exclusão em cascata, consentimento de contato, números brasileiros, CI e build.
+
 ## Confirmação de persistência — 13/11/2026
 - Criação de cliente e equipamento só é considerada confirmada quando a API retorna um registro com ID.
 - Erros de resposta vazia orientam conferir a lista antes de repetir a operação, evitando duplicidade.

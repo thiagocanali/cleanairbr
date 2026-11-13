@@ -20,6 +20,7 @@ const request = async (path, options = {}) => {
       'Content-Type': 'application/json', ...options.headers },
   });
   if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/auth/v1/')) session = null;
     const payload = await response.json().catch(() => ({}));
     throw new Error(payload.msg || payload.message || payload.error_description || payload.error || 'Não foi possível concluir a operação.');
   }
@@ -41,7 +42,7 @@ export async function signOut() {
 }
 export async function listCustomers(search='') {
   const query = new URLSearchParams({select:'id,full_name,phone,email,preferred_contact,contact_consent,created_at',order:'full_name.asc',limit:'100'});
-  if (search.trim()) query.set('full_name','ilike.*'+search.trim().replace(/[*,()]/g,'')+'*');
+  if (search.trim()) query.set('full_name','ilike.*'+search.trim().replace(/[*,()\\]/g,'')+'*');
   return request('/rest/v1/customers?'+query.toString());
 }
 export async function updateCustomer(id,data) {

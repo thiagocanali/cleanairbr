@@ -68,6 +68,13 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - Corrigida semântica HTML de `main` aninhado na gestão.
 - Execução de `npm test` e `npm run build` ainda não verificada nesta sessão. Sem deploy ou merge em `main`.
 
+## Segurança e contratos de API — 13/11/2026
+- Removido endpoint de criação avulsa de lembretes da camada cliente: lembretes de visitas são gerados pela RPC transacional.
+- Testes simulados adicionais: conta não autorizada não permanece logada; logout limpa sessão mesmo com falha remota; resposta 204 em exclusão gera mensagem clara.
+- Import descontinuado removido de `Gestao.vue` para evitar falha de build.
+- **Validação pendente:** testes ainda não executados no CI; não confundir testes simulados com testes reais de autenticação/RLS no Supabase.
+- Ambiente local desta sessão não possui acesso de rede ao GitHub para checkout e execução integral do build. Não foi realizado deploy.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

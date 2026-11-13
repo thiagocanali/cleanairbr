@@ -55,7 +55,7 @@
 <script setup>
 import {ref,reactive,computed,onBeforeUnmount} from 'vue';
 import {compareMeasurements,formatDifference} from '../lib/measurements.js';
-import {configured,signIn,signOut,listCustomers,addCustomer,updateCustomer,deleteCustomer,listEquipment,addEquipment,updateEquipment,deleteEquipment,listVisits,addVisit,listReminders,addReminder,completeReminder} from '../lib/gestaoApi.js';
+import {configured,signIn,signOut,listCustomers,addCustomer,updateCustomer,deleteCustomer,listEquipment,addEquipment,updateEquipment,deleteEquipment,listVisits,addVisit,listReminders,completeReminder} from '../lib/gestaoApi.js';
 const tabs=['Clientes','Atendimentos','Lembretes'];
 const tab=ref('Clientes'),authenticated=ref(false),busy=ref(false),message=ref(''),email=ref(''),password=ref('');
 const customers=ref([]),search=ref(''),showCustomerForm=ref(false),editingCustomerId=ref(''),customer=reactive({full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false});

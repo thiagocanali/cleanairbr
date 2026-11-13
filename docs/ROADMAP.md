@@ -61,6 +61,13 @@ Site institucional profissional e Clean Air Gestão privado, utilizável pelo pr
 - A RPC depende da aplicação sequencial dos scripts 001 e 002 em um projeto exclusivo; sem banco disponível, não há teste de integração ou verificação de RLS.
 - Critério de aceite pendente: transação deve reverter completamente quando uma medição for inválida, usuário não autorizado deve receber erro de permissão, e um atendimento válido deve gerar um único lembrete.
 
+## Validação do cliente API — 13/11/2026
+- Corrigidas sequências literais de quebra de linha que invalidavam o JavaScript em `src/lib/gestaoApi.js`.
+- A camada REST agora suporta respostas JSON escalares da RPC e trata operações PATCH sem registro alterado como erro.
+- Adicionados testes de contrato com `fetch` simulado em `tests/gestaoApi.test.js`; não são testes reais de banco/RLS.
+- Corrigida semântica HTML de `main` aninhado na gestão.
+- Execução de `npm test` e `npm run build` ainda não verificada nesta sessão. Sem deploy ou merge em `main`.
+
 ## Sequência imediata
 1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
 2. CA-005 e CA-006: aplicar migração e validar build/permissões.

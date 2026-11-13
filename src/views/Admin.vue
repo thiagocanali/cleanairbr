@@ -1,5 +1,5 @@
 <template>
-  <div class="admin-page">
+  <div class="admin-page">\n    <p class="demo-warning" role="status"><strong>Protótipo demonstrativo.</strong> Os números e clientes abaixo são fictícios. Os serviços adicionados não são salvos em banco e desaparecem ao recarregar. Não insira dados reais.</p>
     <header class="admin-header">
       <div>
         <p class="eyebrow">Área profissional</p>
@@ -116,7 +116,7 @@ export default {
 </script>
 
 <style scoped>
-.admin-page { max-width: 1180px; margin: 0 auto; padding: 150px 24px 80px; color: #15304a; }
+.demo-warning{padding:14px 18px;border:1px solid #d2a347;background:#fff6df;border-radius:10px;color:#634816;margin-bottom:24px}.admin-page { max-width: 1180px; margin: 0 auto; padding: 150px 24px 80px; color: #15304a; }
 .admin-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 34px; }
 .eyebrow { margin: 0 0 6px; color: #0785a8; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
 h1, h2, p { margin-top: 0; } h1 { margin-bottom: 6px; font-size: clamp(2rem, 4vw, 3rem); line-height: 1.05; } h2 { margin-bottom: 0; font-size: 1.25rem; } .date-label { margin-bottom: 0; color: #668097; }

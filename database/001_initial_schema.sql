@@ -24,7 +24,7 @@ create table public.customers (
 create table public.equipment (
   id uuid primary key default gen_random_uuid(),
   customer_id uuid not null references public.customers(id) on delete cascade,
-  label text not null,
+  label text not null check (length(trim(label)) > 0),
   equipment_type text,
   brand text,
   model text,
@@ -38,7 +38,7 @@ create table public.service_visits (
   id uuid primary key default gen_random_uuid(),
   equipment_id uuid not null references public.equipment(id) on delete cascade,
   performed_at timestamptz not null default now(),
-  service_type text not null default 'higienizacao',
+  service_type text not null default 'higienizacao' check (service_type in ('higienizacao','manutencao','outro')),
   description text,
   technical_notes text,
   status text not null default 'concluido' check (status in ('agendado','em_andamento','concluido','cancelado')),

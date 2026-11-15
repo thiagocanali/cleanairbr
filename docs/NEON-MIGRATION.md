@@ -34,3 +34,11 @@
 - Teste negativo real com equipamento inexistente retornou SQLSTATE `22023`; consultas posteriores confirmaram 0 atendimentos, 0 medições e 0 lembretes.
 - **Pendente:** testes positivos com dados descartáveis, rollback com fase duplicada, API autenticada, isolamento por usuário e integração Vue.
 - A função é uma primitiva interna do banco. A autorização administrativa **deve ser verificada pelo backend** antes de qualquer invocação; não expor esta função diretamente ao navegador.
+
+## Validação server-side de atendimentos — 15/11/2026
+- Adicionado `api/_lib/visit-validation.js`, módulo puro sem acesso a credenciais nem dependências do Supabase.
+- Rejeita UUID inválido, serviço desconhecido, datas impossíveis, fases duplicadas, mais de duas medições, valores não finitos e velocidade negativa.
+- Adicionados oito testes em `tests/visit-validation.test.js`.
+- **Evidência local:** `node --test tests/visit-validation.test.js`: 8 aprovados, 0 falhas; `node --check api/_lib/visit-validation.js`: aprovado no ambiente de trabalho.
+- **Não concluído:** API HTTP autenticada, Better Auth, integração de CRUD e frontend, testes de CI e build completo. O módulo ainda não é utilizado em endpoint de produção.
+- **Segurança:** não criar endpoints que executem SQL até existir verificação de sessão e papel administrativo no backend.

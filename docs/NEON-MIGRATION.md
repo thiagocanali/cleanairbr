@@ -70,3 +70,10 @@
 - Adicionados quatro testes de regressão em `tests/visit-handler.test.js`.
 - **Limite:** requisições sem `Origin` ainda dependem da validação de sessão, de CSRF tokens ou de uma política de `Sec-Fetch-Site` quando houver autenticação por cookies. O adaptador de produção ainda não existe.
 - **Próximo P0:** criar adaptador Better Auth/Neon, política CSRF completa e validar a suíte no GitHub Actions antes de publicar endpoints.
+
+## Continuidade e Fetch Metadata — 15/11/2026
+- Política de trabalho: após cada etapa, seguir para a próxima tarefa executável sem aguardar aprovação para decisões técnicas comuns; nunca realizar produção, merge protegido ou operações destrutivas sem autorização.
+- Handler HTTP agora rejeita `Sec-Fetch-Site: cross-site` e `same-site`, aceitando somente `same-origin` e `none` quando o cabeçalho estiver presente.
+- Três testes de regressão adicionados para escrita cross-site, same-site e same-origin.
+- **Limite:** navegadores/clientes que omitem Fetch Metadata ainda precisam de proteção CSRF compatível com a autenticação escolhida. Não publicar a rota antes de conectar e validar sessão e banco.
+- **P0:** integrar autenticação real, banco server-side e CSRF; **P1:** executar testes completos e confirmar CI; **P2:** migrar CRUD e frontend sem Supabase; **P3:** homologação antes de produção.

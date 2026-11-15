@@ -48,3 +48,10 @@
 - `tests/require-admin.test.js`: sete testes de autorização.
 - Validação local do mesmo código em arquivos temporários `.mjs`: `node --test` **7/7 aprovados**, `node --check` aprovado. Ainda não substitui o teste da suíte integral no checkout do repositório.
 - **Pendente:** integrar Better Auth e Neon na API HTTP, testar sessão real, rate limiting, autorização com usuários distintos e CI do HEAD.
+
+## Composição protegida da criação de atendimentos — 15/11/2026
+- `api/_lib/create-authorized-visit.js` une a checagem administrativa server-side, a validação do payload e a invocação da função Neon com parâmetros `$1` a `$5`.
+- O executor SQL é injetado pelo backend e não contém credenciais no código. Falhas de autenticação e dados inválidos impedem qualquer chamada SQL.
+- `tests/create-authorized-visit.test.js`: seis testes de contrato (sem sessão, sem papel, payload inválido, SQL parametrizado, UUID de resposta, ausência de executor).
+- **Estado: implementado e versionado, sem evidência de execução da nova suíte no checkout/CI.** Ainda não é uma rota HTTP ativa.
+- Próxima integração: provedor de sessão real, adaptador PostgreSQL server-side e handler HTTP seguro, com testes de integração e rate limiting antes de exposição.

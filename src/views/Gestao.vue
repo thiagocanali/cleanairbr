@@ -118,7 +118,7 @@ const saveVisit=()=>run(async()=>{
  try {await Promise.all([loadVisits(),refreshReminders()])}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}
 });
 const refreshReminders=async()=>{reminders.value=await listReminders()};
-const markReminder=id=>run(async()=>{await completeReminder(id);await refreshReminders();message.value='Contato registrado.'});
+const markReminder=id=>run(async()=>{await completeReminder(id);reminders.value=reminders.value.filter(item=>item.id!==id);message.value='Contato registrado.';try{await refreshReminders()}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}});
 const formatDate=value=>value?new Date(value.length===10?value+'T12:00:00':value).toLocaleDateString('pt-BR'):'—';
 const whatsLink=item=>{const digits=(item.customers?.phone||'').replace(/\D/g,'');const phone=digits.startsWith('55')&&digits.length>=12?digits:'55'+digits;return 'https://wa.me/'+phone+'?text='+encodeURIComponent('Olá! Aqui é da Clean Air. Gostaria de conversar sobre uma nova higienização do seu ar-condicionado. Podemos falar?')};
 </script>

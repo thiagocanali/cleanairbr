@@ -63,3 +63,10 @@
 - `tests/visit-handler.test.js` adiciona seis cenários de contrato HTTP.
 - **Não homologado:** os novos testes ainda não têm execução comprovada; o GitHub Actions do último HEAD consultado não retornou execuções.
 - **P0 em andamento:** configurar sessões reais no servidor, adaptador de banco PostgreSQL, proteção contra CSRF quando usar cookies e rate limiting antes de registrar rota acessível externamente.
+
+## Endurecimento do handler HTTP — 15/11/2026
+- Corrigida aceitação de tipos MIME que apenas começavam com `application/json`; agora somente JSON com parâmetros MIME opcionais é aceito.
+- Cabeçalho `Origin` presente exige correspondência exata em `allowedOrigins` fornecida pelo adaptador confiável do servidor; sem lista configurada, origem presente é rejeitada.
+- Adicionados quatro testes de regressão em `tests/visit-handler.test.js`.
+- **Limite:** requisições sem `Origin` ainda dependem da validação de sessão, de CSRF tokens ou de uma política de `Sec-Fetch-Site` quando houver autenticação por cookies. O adaptador de produção ainda não existe.
+- **Próximo P0:** criar adaptador Better Auth/Neon, política CSRF completa e validar a suíte no GitHub Actions antes de publicar endpoints.

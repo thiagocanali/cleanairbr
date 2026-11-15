@@ -72,7 +72,7 @@ const run=async(fn)=>{if(busy.value)return;busy.value=true;message.value='';try{
 const refreshCustomers=async()=>{customers.value=await listCustomers(search.value)};
 const login=()=>run(async()=>{await signIn(email.value,password.value);try{await Promise.all([refreshCustomers(),refreshReminders()]);authenticated.value=true;password.value=''}catch(error){try{await signOut()}catch{}throw error}});
 const logout=()=>run(async()=>{try{await signOut()}finally{authenticated.value=false;customers.value=[];equipments.value=[];visits.value=[];reminders.value=[];selectedCustomerId.value='';selectedEquipmentId.value='';password.value=''}});
-const debouncedSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>run(refreshCustomers),300)};
+const debouncedSearch=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(()=>{if(busy.value){debouncedSearch();return}run(refreshCustomers)},300)};
 const resetCustomer=()=>{editingCustomerId.value='';Object.assign(customer,{full_name:'',phone:'',email:'',preferred_contact:'whatsapp',contact_consent:false})};
 const toggleCustomerForm=()=>{showCustomerForm.value=!showCustomerForm.value;if(!showCustomerForm.value)resetCustomer()};
 const editCustomer=item=>{editingCustomerId.value=item.id;Object.assign(customer,{full_name:item.full_name,phone:item.phone||'',email:item.email||'',preferred_contact:item.preferred_contact,contact_consent:item.contact_consent});showCustomerForm.value=true};

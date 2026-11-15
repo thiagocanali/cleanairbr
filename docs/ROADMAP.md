@@ -1,3 +1,11 @@
+## Ciclo de qualidade — 15/11/2026
+- Workflow `quality.yml` aceita `workflow_dispatch`, além de `push` e `pull_request`.
+- Esquema inicial exige identificação não vazia para equipamentos e limita `service_visits.service_type` a `higienizacao`, `manutencao` ou `outro`.
+- A validação na API/RPC não substitui as restrições no banco; ambas foram mantidas.
+- **Validação pendente:** o ambiente local não resolve `github.com` para clonar e executar a suíte; a execução de GitHub Actions precisa ser confirmada pelos logs antes de considerar o CI aprovado.
+- **Bloqueio externo:** não há banco Supabase exclusivo provisionado para aplicar e verificar o SQL. Não reutilizar bancos de outros projetos.
+- **Fila:** (1) obter logs CI; (2) provisionar banco dedicado; (3) aplicar migrations; (4) testar RLS, integridade e RPC; (5) homologar CRUD, responsividade e fluxos de erro; (6) revisar PRs e preparar release.
+
 ## Lembretes e integridade referencial — 13/11/2026
 - Link de WhatsApp passa a adicionar DDI 55 a números brasileiros sem prefixo internacional.
 - A FK `reminders(visit_id,equipment_id)` recebeu `ON DELETE CASCADE` no esquema inicial, para excluir lembretes quando um atendimento for removido.

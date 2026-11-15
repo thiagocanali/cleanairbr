@@ -77,3 +77,15 @@
 - Três testes de regressão adicionados para escrita cross-site, same-site e same-origin.
 - **Limite:** navegadores/clientes que omitem Fetch Metadata ainda precisam de proteção CSRF compatível com a autenticação escolhida. Não publicar a rota antes de conectar e validar sessão e banco.
 - **P0:** integrar autenticação real, banco server-side e CSRF; **P1:** executar testes completos e confirmar CI; **P2:** migrar CRUD e frontend sem Supabase; **P3:** homologação antes de produção.
+
+## Lote de execução 15/11/2026 — segurança e validação
+- Tarefa 1: exigir `Origin` autorizado ou `Sec-Fetch-Site: same-origin` nas escritas; requisições sem ambos são negadas.
+- Tarefa 2: adicionar quatro testes HTTP para origem ausente, `none`, charset inválido e charset UTF-8.
+- Tarefa 3: rejeitar velocidades acima de 200 m/s e temperaturas fora de -100 a 150 °C como proteção de entrada; limites operacionais devem ser revisados conforme instrumentos utilizados.
+- Tarefa 4: adicionar dois testes dos limites físicos.
+- Tarefa 5: atualizar documentação e verificar CI. **A execução dos testes do lote ainda não foi comprovada**; não declarar suíte verde. Consultas de Actions anteriores retornaram lista vazia.
+- **P0:** implementar adaptador de sessão Better Auth e executor SQL server-side sem exposição de credenciais; conectar endpoints protegidos.
+- **P1:** verificar GitHub Actions no HEAD, rodar `npm ci && npm test && npm run build` em ambiente com dependências instaláveis.
+- **P2:** integrar CRUD de clientes, equipamentos, lembretes e histórico.
+- **P3:** migrar `src/lib/gestaoApi.js` e testes para a API própria.
+- **P4:** homologar autenticação, autorização, CSRF e dados em ambiente isolado antes de liberar produção.

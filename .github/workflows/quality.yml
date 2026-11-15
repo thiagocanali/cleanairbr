@@ -5,6 +5,11 @@ on:
     branches: [main, feat/redesign-clean-air-2026]
   pull_request:
     branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
   validate:
     runs-on: ubuntu-latest

@@ -11,7 +11,7 @@ export function makeVisitHandler(dependencies){
    response.setHeader('Allow','POST');
    return response.status(405).json({error:'Método não permitido.'});
   }
-  if(!/^application\/json(?:\s*;|\s*$)/i.test(request.headers?.['content-type']||'')){
+  if(!/^application\/json(?:\s*;\s*charset\s*=\s*(?:utf-8|\"utf-8\")\s*)?$/i.test(request.headers?.['content-type']||'')){
    return response.status(415).json({error:'Envie JSON.'});
   }
   // Defense in depth for cookie-based sessions. Reject cross-origin browser writes.
@@ -19,10 +19,14 @@ export function makeVisitHandler(dependencies){
   const fetchSite=request.headers?.['sec-fetch-site'];
   if(fetchSite&&fetchSite!=='same-origin'&&fetchSite!=='none')return response.status(403).json({error:'Origem não autorizada.'});
   const origin=request.headers?.origin;
+  if(origin&&typeof origin!=='string')return response.status(403).json({error:'Origem não autorizada.'});
   if(origin){
    const allowed=dependencies.allowedOrigins;
    if(!Array.isArray(allowed)||!allowed.includes(origin))return response.status(403).json({error:'Origem não autorizada.'});
   }
+  // A cookie-authenticated POST must present an Origin that matches the trusted list.
+  // Without it, a strict same-origin Fetch Metadata signal is required.
+  if(!origin&&fetchSite!=='same-origin')return response.status(403).json({error:'Origem não autorizada.'});
   try{
    const result=await createAuthorizedVisit(request,dependencies);
    return response.status(201).json(result);

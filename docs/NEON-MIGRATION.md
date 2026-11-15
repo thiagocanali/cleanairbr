@@ -55,3 +55,11 @@
 - `tests/create-authorized-visit.test.js`: seis testes de contrato (sem sessão, sem papel, payload inválido, SQL parametrizado, UUID de resposta, ausência de executor).
 - **Estado: implementado e versionado, sem evidência de execução da nova suíte no checkout/CI.** Ainda não é uma rota HTTP ativa.
 - Próxima integração: provedor de sessão real, adaptador PostgreSQL server-side e handler HTTP seguro, com testes de integração e rate limiting antes de exposição.
+
+## Contrato HTTP para atendimento — 15/11/2026
+- Adicionado `api/_lib/visit-handler.js`, handler desacoplado de framework, sem credenciais e sem rota pública registrada.
+- Apenas `POST` com `Content-Type: application/json`; respostas `401`, `403`, `400`, `405`, `415`, `500` e `201`, com `Cache-Control: no-store`.
+- Mensagens internas de SQL não são devolvidas ao cliente.
+- `tests/visit-handler.test.js` adiciona seis cenários de contrato HTTP.
+- **Não homologado:** os novos testes ainda não têm execução comprovada; o GitHub Actions do último HEAD consultado não retornou execuções.
+- **P0 em andamento:** configurar sessões reais no servidor, adaptador de banco PostgreSQL, proteção contra CSRF quando usar cookies e rate limiting antes de registrar rota acessível externamente.

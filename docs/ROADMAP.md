@@ -1,3 +1,9 @@
+## Busca de clientes — 15/11/2026
+- Neutralizados curingas `%` e `_` na busca por nome, além dos caracteres já tratados, evitando correspondências inesperadas em filtros `ilike`.
+- Adicionado teste de regressão do parâmetro `full_name` enviado ao PostgREST.
+- Commits: `6547aff`, `be3da5c`.
+- **Estado: implementado, não homologado.** O clone local falhou por indisponibilidade de DNS de `github.com`; aguarda execução de testes/build na CI.
+
 ## Exclusões e busca de clientes — 15/11/2026
 - Exclusões confirmadas de cliente e equipamento atualizam a lista local antes de tentar sincronização com a API; falha de recarga não é confundida com falha de exclusão.
 - A busca digitada durante uma operação ocupada é reagendada, evitando descarte silencioso do filtro.

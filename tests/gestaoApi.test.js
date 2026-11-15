@@ -236,3 +236,14 @@ test('cadastros confirmados retornam identificador persistido', async () => {
   assert.equal(calls[0].options.headers.Prefer,'return=representation');
   assert.equal(calls[1].options.headers.Prefer,'return=representation');
 });
+
+test('busca de clientes neutraliza curingas de filtro PostgREST', async () => {
+  const paths=[];
+  globalThis.fetch=async (url)=>{
+    paths.push(new URL(url));
+    return {ok:true,status:200,text:async()=>JSON.stringify([])};
+  };
+  await api.listCustomers('  A%_*(B),\\C  ');
+  assert.equal(paths.length,1);
+  assert.equal(paths[0].searchParams.get('full_name'),'ilike.*ABC*');
+});

@@ -42,3 +42,9 @@
 - **Evidência local:** `node --test tests/visit-validation.test.js`: 8 aprovados, 0 falhas; `node --check api/_lib/visit-validation.js`: aprovado no ambiente de trabalho.
 - **Não concluído:** API HTTP autenticada, Better Auth, integração de CRUD e frontend, testes de CI e build completo. O módulo ainda não é utilizado em endpoint de produção.
 - **Segurança:** não criar endpoints que executem SQL até existir verificação de sessão e papel administrativo no backend.
+
+## Barreira administrativa da API — 15/11/2026
+- `api/_lib/require-admin.js`: exige sessão verificada e consulta papel administrativo em fonte confiável; nega acesso sem sessão, sem conta, com papel insuficiente ou identidade divergente.
+- `tests/require-admin.test.js`: sete testes de autorização.
+- Validação local do mesmo código em arquivos temporários `.mjs`: `node --test` **7/7 aprovados**, `node --check` aprovado. Ainda não substitui o teste da suíte integral no checkout do repositório.
+- **Pendente:** integrar Better Auth e Neon na API HTTP, testar sessão real, rate limiting, autorização com usuários distintos e CI do HEAD.

@@ -17,6 +17,8 @@ export function validateVisitInput(input){
   const numberOrNull=(value,label)=>{if(value===''||value==null)return null;if(typeof value!=='number'&&(typeof value!=='string'||!value.trim()))throw new TypeError(label+' inválida.');const parsed=Number(value);if(!Number.isFinite(parsed))throw new TypeError(label+' inválida.');return parsed;};
   const velocity=numberOrNull(item.air_velocity_ms,'Velocidade do ar');
   const temperature=numberOrNull(item.outlet_temperature_c,'Temperatura');
+  if(temperature!=null&&(temperature < -100||temperature > 150))throw new TypeError('Temperatura fora do intervalo permitido.');
+  if(velocity!=null&&velocity>200)throw new TypeError('Velocidade do ar fora do intervalo permitido.');
   if(velocity!=null&&velocity<0)throw new TypeError('Velocidade do ar inválida.');
   if(item.test_conditions!=null&&(typeof item.test_conditions!=='string'||item.test_conditions.length>2000))throw new TypeError('Condições do teste inválidas.');
   return {phase:item.phase,air_velocity_ms:velocity,outlet_temperature_c:temperature,test_conditions:item.test_conditions||null};

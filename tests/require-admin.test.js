@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {AccessDenied,requireAdmin} from '../api/_lib/require-admin.js';
+const request={};
+const providers=(session,user)=>({getSession:async()=>session,findUser:async()=>user});
+test('nega acesso sem sessão',async()=>{await assert.rejects(requireAdmin(request,providers(null,null)),e=>e instanceof AccessDenied&&e.status===401)});
+test('nega sessão sem identificador',async()=>{await assert.rejects(requireAdmin(request,providers({user:{}},null)),e=>e.status===401)});
+test('nega conta não cadastrada',async()=>{await assert.rejects(requireAdmin(request,providers({user:{id:'u1'}},null)),e=>e.status===403)});
+test('nega papel comum mesmo que sessão declare admin',async()=>{await assert.rejects(requireAdmin(request,providers({user:{id:'u1',role:'admin'}},{id:'u1',role:'user'})),e=>e.status===403)});
+test('nega usuário de outro identificador',async()=>{await assert.rejects(requireAdmin(request,providers({user:{id:'u1'}},{id:'u2',role:'admin'})),e=>e.status===403)});
+test('permite somente administrador verificado no banco',async()=>{assert.deepEqual(await requireAdmin(request,providers({user:{id:'u1'}},{id:'u1',role:'admin'})),{userId:'u1'})});
+test('nega quando provedores não estão configurados',async()=>{await assert.rejects(requireAdmin(request,{}),TypeError)});

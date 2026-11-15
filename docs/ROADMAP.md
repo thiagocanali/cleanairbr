@@ -1,3 +1,10 @@
+## Exclusões e busca de clientes — 15/11/2026
+- Exclusões confirmadas de cliente e equipamento atualizam a lista local antes de tentar sincronização com a API; falha de recarga não é confundida com falha de exclusão.
+- A busca digitada durante uma operação ocupada é reagendada, evitando descarte silencioso do filtro.
+- Commits `b5da809` e `fc89c4c`.
+- **Implementado, ainda não homologado:** dependente de execução da suíte e testes reais de interface/integração.
+- **Fila ativa:** obter execução de CI; testar fluxos CRUD com backend dedicado; paginação; validar autenticação/RLS; revisão mobile.
+
 ## Confirmação de operações e sincronização da interface — 15/11/2026
 - Formulários de clientes e equipamentos preservam confirmação de gravação quando a recarga da lista falha; o erro de sincronização é exibido separadamente.
 - Conclusão de lembrete remove o item da lista local após confirmação do PATCH, preservando a mensagem caso a recarga falhe.

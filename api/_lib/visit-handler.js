@@ -11,8 +11,15 @@ export function makeVisitHandler(dependencies){
    response.setHeader('Allow','POST');
    return response.status(405).json({error:'Método não permitido.'});
   }
-  if(!request.headers?.['content-type']?.toLowerCase().startsWith('application/json')){
+  if(!/^application\/json(?:\s*;|\s*$)/i.test(request.headers?.['content-type']||'')){
    return response.status(415).json({error:'Envie JSON.'});
+  }
+  // Defense in depth for cookie-based sessions. Reject cross-origin browser writes.
+  // Configure explicit trusted origins in the server adapter; never trust Host blindly.
+  const origin=request.headers?.origin;
+  if(origin){
+   const allowed=dependencies.allowedOrigins;
+   if(!Array.isArray(allowed)||!allowed.includes(origin))return response.status(403).json({error:'Origem não autorizada.'});
   }
   try{
    const result=await createAuthorizedVisit(request,dependencies);

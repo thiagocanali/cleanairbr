@@ -1,3 +1,10 @@
+## Confirmação de operações e sincronização da interface — 15/11/2026
+- Formulários de clientes e equipamentos preservam confirmação de gravação quando a recarga da lista falha; o erro de sincronização é exibido separadamente.
+- Conclusão de lembrete remove o item da lista local após confirmação do PATCH, preservando a mensagem caso a recarga falhe.
+- Commits: `830c0ce` e `2c79541`.
+- **Validação pendente:** testes de interface e integração, pois a máquina de execução não resolve `github.com` e o GitHub não retornou runs de CI para o último commit.
+- **Próxima execução:** revisão dos estados de erro de exclusão, paginação de clientes e verificação de autenticação/RLS quando houver banco dedicado.
+
 ## Ciclo de qualidade — 15/11/2026
 - Workflow `quality.yml` aceita `workflow_dispatch`, além de `push` e `pull_request`.
 - Esquema inicial exige identificação não vazia para equipamentos e limita `service_visits.service_type` a `higienizacao`, `manutencao` ou `outro`.

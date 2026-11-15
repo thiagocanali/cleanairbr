@@ -87,7 +87,7 @@ const saveCustomer=()=>run(async()=>{
 });
 const removeCustomer=item=>{
  if(!window.confirm('Excluir '+item.full_name+' e TODOS os equipamentos, atendimentos e lembretes vinculados? Esta ação não pode ser desfeita.'))return;
- run(async()=>{await deleteCustomer(item.id);if(selectedCustomerId.value===item.id){selectedCustomerId.value='';selectedEquipmentId.value='';equipments.value=[];visits.value=[]}await refreshCustomers();await refreshReminders();message.value='Cliente excluído.'});
+ run(async()=>{await deleteCustomer(item.id);customers.value=customers.value.filter(customer=>customer.id!==item.id);if(selectedCustomerId.value===item.id){selectedCustomerId.value='';selectedEquipmentId.value='';equipments.value=[];visits.value=[]}message.value='Cliente excluído.';try{await Promise.all([refreshCustomers(),refreshReminders()])}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}});
 };
 const openCustomer=async(item)=>{selectedCustomerId.value=item.id;tab.value='Atendimentos';await run(loadEquipment)};
 const loadEquipment=async()=>{selectedEquipmentId.value='';visits.value=[];equipments.value=selectedCustomerId.value?await listEquipment(selectedCustomerId.value):[]};
@@ -103,7 +103,7 @@ const saveEquipment=()=>run(async()=>{
 });
 const removeEquipment=item=>{
  if(!window.confirm('Excluir '+item.label+' e TODOS os atendimentos e lembretes vinculados? Esta ação não pode ser desfeita.'))return;
- run(async()=>{await deleteEquipment(item.id);await loadEquipment();await refreshReminders();message.value='Equipamento excluído.'});
+ run(async()=>{await deleteEquipment(item.id);equipments.value=equipments.value.filter(equipment=>equipment.id!==item.id);if(selectedEquipmentId.value===item.id){selectedEquipmentId.value='';visits.value=[]}message.value='Equipamento excluído.';try{await Promise.all([loadEquipment(),refreshReminders()])}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}});
 };
 const loadVisits=async()=>{visits.value=selectedEquipmentId.value?await listVisits(selectedEquipmentId.value):[]};
 const saveVisit=()=>run(async()=>{

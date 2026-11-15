@@ -4,7 +4,7 @@ import {makeVisitHandler} from '../api/_lib/visit-handler.js';
 const uuid='123e4567-e89b-42d3-a456-426614174000';
 const body={equipment_id:uuid,service_type:'higienizacao',measurements:[]};
 function response(){return {code:0,headers:{},payload:null,setHeader(k,v){this.headers[k]=v;return this},status(c){this.code=c;return this},json(p){this.payload=p;return this}}}
-const req=(method='POST',data=body)=>({method,headers:{'content-type':'application/json'},body:data});
+const req=(method='POST',data=body)=>({method,headers:{'content-type':'application/json','sec-fetch-site':'same-origin'},body:data});
 const deps=(session={user:{id:'u1'}},query=async()=>({rows:[{id:uuid}]}))=>({getSession:async()=>session,findUser:async()=>({id:'u1',role:'admin'}),query});
 test('recusa método diferente de POST',async()=>{const res=response();await makeVisitHandler(deps())(req('GET'),res);assert.equal(res.code,405);assert.equal(res.headers.Allow,'POST')});
 test('recusa conteúdo não JSON',async()=>{const res=response();const request=req();request.headers['content-type']='text/plain';await makeVisitHandler(deps())(request,res);assert.equal(res.code,415)});
@@ -21,3 +21,8 @@ test('origem presente sem configuração é negada',async()=>{const res=response
 test('nega escrita cross-site mesmo sem Origin',async()=>{let calls=0;const res=response();const request=req();request.headers['sec-fetch-site']='cross-site';await makeVisitHandler(deps(undefined,async()=>{calls++}))(request,res);assert.equal(res.code,403);assert.equal(calls,0)});
 test('nega escrita same-site sem confiança explícita',async()=>{const res=response();const request=req();request.headers['sec-fetch-site']='same-site';await makeVisitHandler(deps())(request,res);assert.equal(res.code,403)});
 test('permite fetch metadata same-origin',async()=>{const res=response();const request=req();request.headers['sec-fetch-site']='same-origin';await makeVisitHandler(deps())(request,res);assert.equal(res.code,201)});
+
+test('nega POST sem Origin e sem Fetch Metadata',async()=>{const res=response();const request=req();delete request.headers['sec-fetch-site'];await makeVisitHandler(deps())(request,res);assert.equal(res.code,403)});
+test('nega POST com Sec-Fetch-Site none e sem Origin',async()=>{const res=response();const request=req();request.headers['sec-fetch-site']='none';await makeVisitHandler(deps())(request,res);assert.equal(res.code,403)});
+test('recusa charset arbitrário em Content-Type',async()=>{const res=response();const request=req();request.headers['content-type']='application/json; charset=evil';await makeVisitHandler(deps())(request,res);assert.equal(res.code,415)});
+test('aceita JSON com charset UTF-8',async()=>{const res=response();const request=req();request.headers['content-type']='application/json; charset=utf-8';await makeVisitHandler(deps())(request,res);assert.equal(res.code,201)});

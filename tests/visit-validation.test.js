@@ -11,3 +11,6 @@ test('rejeita valores não finitos',()=>assert.throws(()=>validateVisitInput({..
 test('rejeita velocidade negativa',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'antes',air_velocity_ms:-1}]}),/Velocidade/));
 test('rejeita data impossível',()=>assert.throws(()=>validateVisitInput({...base,next_contact_on:'2027-02-30'}),/Data/));
 test('rejeita mais de duas medições',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{},{},{}]}),/duas/));
+
+test('rejeita velocidade acima do limite físico',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'antes',air_velocity_ms:201}]}),/intervalo/));
+test('rejeita temperatura extrema',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'depois',outlet_temperature_c:151}]}),/intervalo/));

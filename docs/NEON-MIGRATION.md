@@ -89,3 +89,10 @@
 - **P2:** integrar CRUD de clientes, equipamentos, lembretes e histórico.
 - **P3:** migrar `src/lib/gestaoApi.js` e testes para a API própria.
 - **P4:** homologar autenticação, autorização, CSRF e dados em ambiente isolado antes de liberar produção.
+
+## Lote de autenticação — 15/11/2026
+- `database/neon/003_auth_tables.sql` versiona estrutura **aditiva, ainda não aplicada** para usuários, sessões, contas e verificações Better Auth; `app_users.auth_user_id` associa identidade autenticada ao papel administrativo.
+- `api/_lib/admin-user-lookup.js` implementa consulta parametrizada de papel administrativo por `auth_user_id`; nunca utiliza papéis enviados pelo navegador.
+- `tests/admin-user-lookup.test.js` adiciona cinco testes. **Executados em cópia local dos mesmos módulos:** `node --test` 5/5 aprovados e `node --check` aprovado. Não representa execução da suíte integral do checkout.
+- A migração requer validação de compatibilidade com a versão exata do adaptador Better Auth, antes de ser aplicada. Não executar no banco ativo nem registrar endpoints sem revisão do adaptador e política de sessão.
+- **Pendências prioritárias:** fixar dependências e lockfile, implementar adaptador Better Auth e pool Neon no servidor, aplicar migration em ambiente de desenvolvimento após revisão, integrar handler, executar `npm ci && npm test && npm run build` e CI.

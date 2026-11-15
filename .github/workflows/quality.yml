@@ -1,5 +1,6 @@
 name: Qualidade do frontend
 on:
+  workflow_dispatch:
   push:
     branches: [main, feat/redesign-clean-air-2026]
   pull_request:

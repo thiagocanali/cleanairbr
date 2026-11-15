@@ -26,3 +26,11 @@
 - O esquema atual é acessado apenas por conexão de servidor; não há API pública de banco.
 - Não desativar proteção de previews, não alterar produção, não apagar o projeto Supabase antigo antes da homologação.
 - Os previews automáticos da Vercel foram desabilitados temporariamente para economizar cota; CI GitHub Actions deve validar código sem deploy.
+
+## Migration transacional de atendimentos — 15/11/2026
+- `database/neon/002_atomic_service_visit.sql` aplicada ao banco Neon `cleanair`.
+- A função `public.create_service_visit` é `SECURITY INVOKER` e não concede execução ao papel público.
+- Consulta real ao catálogo confirmou `public_execute=false`.
+- Teste negativo real com equipamento inexistente retornou SQLSTATE `22023`; consultas posteriores confirmaram 0 atendimentos, 0 medições e 0 lembretes.
+- **Pendente:** testes positivos com dados descartáveis, rollback com fase duplicada, API autenticada, isolamento por usuário e integração Vue.
+- A função é uma primitiva interna do banco. A autorização administrativa **deve ser verificada pelo backend** antes de qualquer invocação; não expor esta função diretamente ao navegador.

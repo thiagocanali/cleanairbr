@@ -1,3 +1,12 @@
+## Política de deploy econômico — 15/11/2026
+- Evidência: a Vercel registrou tentativas separadas para cada push da branch `feat/redesign-clean-air-2026`, inclusive commits exclusivamente de documentação, todas com `ERROR` no recorte recente consultado.
+- Projeto Vercel: `cleanairbr` (`prj_2AQECv3NKg5AlhlbyKmbZErFfMy7`). Previews automáticos desabilitados temporariamente pela configuração `previewDeploymentsDisabled=true`; produção não alterada.
+- Para homologar uma versão hospedada, reabilitar previews no projeto de forma controlada, gerar apenas o preview necessário e desabilitar novamente enquanto durar a fase de desenvolvimento intenso.
+- GitHub Actions: permissões mínimas de leitura e `concurrency.cancel-in-progress` para evitar jobs obsoletos; não há deploy automático no workflow de qualidade.
+- Agrupar commits relacionados em um push por lote sempre que possível. Documentação e testes devem ser validados pelo Actions, não por previews.
+- **Verificação pendente:** observar o próximo push e consultar novamente a lista de deployments; a confirmação da API de configuração não comprova isoladamente a supressão de novos previews.
+- **Importante:** deploy READY, quando houver, não substitui testes de autenticação, RLS, banco e fluxos reais.
+
 ## Busca de clientes — 15/11/2026
 - Neutralizados curingas `%` e `_` na busca por nome, além dos caracteres já tratados, evitando correspondências inesperadas em filtros `ilike`.
 - Adicionado teste de regressão do parâmetro `full_name` enviado ao PostgREST.

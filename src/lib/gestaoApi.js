@@ -47,7 +47,7 @@ export async function signOut() {
 }
 export async function listCustomers(search='') {
   const query = new URLSearchParams({select:'id,full_name,phone,email,preferred_contact,contact_consent,created_at',order:'full_name.asc',limit:'100'});
-  if (search.trim()) query.set('full_name','ilike.*'+search.trim().replace(/[*,()\\]/g,'')+'*');
+  if (search.trim()) query.set('full_name','ilike.*'+search.trim().replace(/[%_*,()\\]/g,'')+'*');
   return request('/rest/v1/customers?'+query.toString());
 }
 export async function updateCustomer(id,data) {

@@ -16,6 +16,8 @@ export function makeVisitHandler(dependencies){
   }
   // Defense in depth for cookie-based sessions. Reject cross-origin browser writes.
   // Configure explicit trusted origins in the server adapter; never trust Host blindly.
+  const fetchSite=request.headers?.['sec-fetch-site'];
+  if(fetchSite&&fetchSite!=='same-origin'&&fetchSite!=='none')return response.status(403).json({error:'Origem não autorizada.'});
   const origin=request.headers?.origin;
   if(origin){
    const allowed=dependencies.allowedOrigins;

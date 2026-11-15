@@ -82,7 +82,8 @@ const saveCustomer=()=>run(async()=>{
  if(phone && (phone.length<10||phone.length>13)) throw new Error('Informe um telefone válido com DDD.');
  const payload={...customer,full_name:customer.full_name.trim(),email:customer.email||null,phone:phone||null};
  if(editingCustomerId.value) await updateCustomer(editingCustomerId.value,payload); else await addCustomer(payload);
- resetCustomer();showCustomerForm.value=false;await refreshCustomers();message.value='Cliente salvo.';
+ resetCustomer();showCustomerForm.value=false;message.value='Cliente salvo.';
+ try {await refreshCustomers()}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}
 });
 const removeCustomer=item=>{
  if(!window.confirm('Excluir '+item.full_name+' e TODOS os equipamentos, atendimentos e lembretes vinculados? Esta ação não pode ser desfeita.'))return;
@@ -97,7 +98,8 @@ const saveEquipment=()=>run(async()=>{
  if(!equipment.label.trim()) throw new Error('Informe a identificação do equipamento.');
  const payload={...equipment,customer_id:selectedCustomerId.value,brand:equipment.brand||null,model:equipment.model||null};
  if(editingEquipmentId.value) await updateEquipment(editingEquipmentId.value,payload); else await addEquipment(payload);
- resetEquipment();showEquipmentForm.value=false;await loadEquipment();message.value='Equipamento salvo.';
+ resetEquipment();showEquipmentForm.value=false;message.value='Equipamento salvo.';
+ try {await loadEquipment()}catch(error){message.value+=' Não foi possível atualizar a lista: '+error.message}
 });
 const removeEquipment=item=>{
  if(!window.confirm('Excluir '+item.label+' e TODOS os atendimentos e lembretes vinculados? Esta ação não pode ser desfeita.'))return;

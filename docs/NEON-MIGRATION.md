@@ -96,3 +96,13 @@
 - `tests/admin-user-lookup.test.js` adiciona cinco testes. **Executados em cópia local dos mesmos módulos:** `node --test` 5/5 aprovados e `node --check` aprovado. Não representa execução da suíte integral do checkout.
 - A migração requer validação de compatibilidade com a versão exata do adaptador Better Auth, antes de ser aplicada. Não executar no banco ativo nem registrar endpoints sem revisão do adaptador e política de sessão.
 - **Pendências prioritárias:** fixar dependências e lockfile, implementar adaptador Better Auth e pool Neon no servidor, aplicar migration em ambiente de desenvolvimento após revisão, integrar handler, executar `npm ci && npm test && npm run build` e CI.
+
+## Verificação direta do Neon e PR de consolidação — 15/11/2026
+- Projeto Neon identificado: `cleanair-gestao` (`misty-wind-88430051`), região `aws-sa-east-1`, PostgreSQL 17.
+- Branch default `main` (`br-jolly-moon-b6xwwiih`) está `ready`; database `cleanair`; role de conexão `cleanair_owner`.
+- Consulta somente leitura confirmou as seis tabelas operacionais (`app_users`, `customers`, `equipment`, `measurements`, `reminders`, `service_visits`) e a função `create_service_visit`. As quatro tabelas Better Auth ainda não existem no banco. A migration 003 continua pendente.
+- Criado `api/_lib/better-auth-schema-config.js` com mapeamento explícito dos modelos/tabelas e colunas snake_case da migration 003; cinco testes de contrato adicionados. Baseado na documentação oficial Better Auth sobre `modelName` e `fields`: https://better-auth.com/docs/reference/options.
+- PR #4 criada como draft para consolidar esta branch. GitHub reportou `mergeable: false`; não realizar merge. A comparação anterior indicava 107 commits à frente e 1 atrás de `main`, portanto é necessária reconciliação consciente da divergência.
+- PR #3 existente usa a branch `v0/checkup-cleanair`; PR #2 já está merged. Não confundir a PR #3 com a nova PR #4.
+- Limitações: Better Auth e PostgreSQL pool ainda não estão instalados/configurados no `package.json`; `src/lib/gestaoApi.js` continua chamando Supabase; nenhum teste de integração/CI deste HEAD foi confirmado.
+- Região Neon `aws-sa-east-1` não suporta Neon Functions. Não depender de Neon Functions para endpoints Vercel.

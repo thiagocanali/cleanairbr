@@ -14,3 +14,6 @@ test('rejeita mais de duas medições',()=>assert.throws(()=>validateVisitInput(
 
 test('rejeita velocidade acima do limite físico',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'antes',air_velocity_ms:201}]}),/intervalo/));
 test('rejeita temperatura extrema',()=>assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'depois',outlet_temperature_c:151}]}),/intervalo/));
+
+test('rejeita strings numéricas não decimais',()=>{for(const value of ['0x10','0b11','0o7','1_000'])assert.throws(()=>validateVisitInput({...base,measurements:[{phase:'antes',air_velocity_ms:value}]}),/Velocidade/)});
+test('aceita decimal com expoente finito',()=>{const r=validateVisitInput({...base,measurements:[{phase:'antes',air_velocity_ms:'2.5e1'}]});assert.equal(r.measurements[0].air_velocity_ms,25)});

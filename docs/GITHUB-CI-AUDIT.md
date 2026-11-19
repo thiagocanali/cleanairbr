@@ -23,3 +23,10 @@
 - Verificar se as versões SHA pinadas são aceitas e se a CI completa passa no HEAD.
 - Não ativar auto-merge sem confirmar regras, checks, reviews e autorização de integração.
 - Nenhuma proteção de `main` foi alterada; nenhuma migration, segredo ou configuração de produção foi modificada.
+
+## Ciclo de acompanhamento — 19/11/2026
+- **CI confirmada:** execução [#44533031759](https://github.com/thiagocanali/cleanairbr/actions/runs/44533031759), HEAD `5640cf8`, `completed/success`; job `Testes e build`: checkout, setup-node, `npm ci`, `npm test`, `npm run build` todos `success`.
+- Corrigido `vercel.json`: o fallback SPA anterior incluía `/api/*`, o que poderia transformar respostas da API serverless em `index.html`. O novo matcher exclui `api/`, `assets/` e `favicon.ico`.
+- Adicionados testes `tests/vercel-routing.test.js` para garantir que endpoints `/api` não sejam capturados e rotas SPA permaneçam atendidas.
+- **Atenção:** os testes novos e o build ainda precisam ser confirmados na CI do novo HEAD; não confundir a CI verde de `5640cf8` com o commit mais recente.
+- **Próximas prioridades:** concluir autenticação Better Auth e adaptador Neon no servidor, validar migração 003 em ambiente isolado, integrar endpoints CRUD, substituir o cliente Supabase e homologar a PR antes de qualquer merge.

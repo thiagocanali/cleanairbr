@@ -14,7 +14,7 @@ export function validateVisitInput(input){
  const normalized=measurements.map(item=>{
   if(!item||typeof item!=='object'||Array.isArray(item)||!PHASES.has(item.phase)||seen.has(item.phase))throw new TypeError('Fase da medição inválida ou duplicada.');
   seen.add(item.phase);
-  const numberOrNull=(value,label)=>{if(value===''||value==null)return null;if(typeof value!=='number'&&(typeof value!=='string'||!value.trim()))throw new TypeError(label+' inválida.');const parsed=Number(value);if(!Number.isFinite(parsed))throw new TypeError(label+' inválida.');return parsed;};
+  const numberOrNull=(value,label)=>{if(value===''||value==null)return null;if(typeof value!=='number'&&(typeof value!=='string'||!/^[-+]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][-+]?\d+)?$/.test(value.trim())))throw new TypeError(label+' inválida.');const parsed=Number(value);if(!Number.isFinite(parsed))throw new TypeError(label+' inválida.');return parsed;};
   const velocity=numberOrNull(item.air_velocity_ms,'Velocidade do ar');
   const temperature=numberOrNull(item.outlet_temperature_c,'Temperatura');
   if(temperature!=null&&(temperature < -100||temperature > 150))throw new TypeError('Temperatura fora do intervalo permitido.');

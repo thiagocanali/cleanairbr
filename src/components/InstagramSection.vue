@@ -1,56 +1,20 @@
 <template>
-  <a
-    :href="whatsLink"
-    target="_blank"
-    rel="noopener noreferrer"
-    class="whatsapp-button"
-  >
-    <span class="whatsapp-icon" aria-hidden="true">💬</span>
-    Fale Conosco
-  </a>
+  <section class="instagram-section" aria-labelledby="social-title">
+    <div class="section-inner social-layout">
+      <div>
+        <p class="section-label">Contato e novidades</p>
+        <h2 id="social-title" class="section-title">Converse com a CleanAir.</h2>
+        <p class="section-intro">Para agendar uma higienização ou tirar dúvidas sobre o atendimento, fale diretamente pelo WhatsApp.</p>
+      </div>
+      <a class="social-link" href="https://wa.me/554791223570" target="_blank" rel="noopener noreferrer">Solicitar atendimento pelo WhatsApp</a>
+    </div>
+  </section>
 </template>
-
-<script>
-export default {
-  name: "WhatsAppButton",
-  computed: {
-    whatsLink() {
-      const number = "554791223570";
-      const message = encodeURIComponent(
-        "Olá! Vim pelo site da CleanAir e gostaria de mais informações."
-      );
-      return `https://wa.me/${number}?text=${message}`;
-    }
-  }
-};
-</script>
-
 <style scoped>
-.whatsapp-button {
-  position: fixed;
-  right: 20px;
-  bottom: 20px;
-  background: #25d366;
-  color: #fff;
-  padding: 12px 20px;
-  border-radius: 50px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: bold;
-  font-size: 16px;
-  text-decoration: none;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
-  transition: transform 0.2s ease;
-}
-.whatsapp-button:hover {
-  transform: scale(1.05);
-}
-.whatsapp-button img,
-.whatsapp-icon {
-  width: 24px;
-  height: 24px;
-  font-size: 22px;
-  line-height: 1;
-}
+.instagram-section{background:var(--sky)}
+.social-layout{display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.social-layout>div{flex:1 1 350px}
+.social-link{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:9px;background:var(--navy);color:#fff;text-decoration:none;font-weight:800}
+.social-link:hover{background:var(--blue)}
+@media(max-width:640px){.social-link{width:100%}}
 </style>

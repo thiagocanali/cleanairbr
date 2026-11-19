@@ -1,0 +1,165 @@
+## Política de deploy econômico — 15/11/2026
+- Evidência: a Vercel registrou tentativas separadas para cada push da branch `feat/redesign-clean-air-2026`, inclusive commits exclusivamente de documentação, todas com `ERROR` no recorte recente consultado.
+- Projeto Vercel: `cleanairbr` (`prj_2AQECv3NKg5AlhlbyKmbZErFfMy7`). Previews automáticos desabilitados temporariamente pela configuração `previewDeploymentsDisabled=true`; produção não alterada.
+- Para homologar uma versão hospedada, reabilitar previews no projeto de forma controlada, gerar apenas o preview necessário e desabilitar novamente enquanto durar a fase de desenvolvimento intenso.
+- GitHub Actions: permissões mínimas de leitura e `concurrency.cancel-in-progress` para evitar jobs obsoletos; não há deploy automático no workflow de qualidade.
+- Agrupar commits relacionados em um push por lote sempre que possível. Documentação e testes devem ser validados pelo Actions, não por previews.
+- **Verificação pendente:** observar o próximo push e consultar novamente a lista de deployments; a confirmação da API de configuração não comprova isoladamente a supressão de novos previews.
+- **Importante:** deploy READY, quando houver, não substitui testes de autenticação, RLS, banco e fluxos reais.
+
+## Busca de clientes — 15/11/2026
+- Neutralizados curingas `%` e `_` na busca por nome, além dos caracteres já tratados, evitando correspondências inesperadas em filtros `ilike`.
+- Adicionado teste de regressão do parâmetro `full_name` enviado ao PostgREST.
+- Commits: `6547aff`, `be3da5c`.
+- **Estado: implementado, não homologado.** O clone local falhou por indisponibilidade de DNS de `github.com`; aguarda execução de testes/build na CI.
+
+## Exclusões e busca de clientes — 15/11/2026
+- Exclusões confirmadas de cliente e equipamento atualizam a lista local antes de tentar sincronização com a API; falha de recarga não é confundida com falha de exclusão.
+- A busca digitada durante uma operação ocupada é reagendada, evitando descarte silencioso do filtro.
+- Commits `b5da809` e `fc89c4c`.
+- **Implementado, ainda não homologado:** dependente de execução da suíte e testes reais de interface/integração.
+- **Fila ativa:** obter execução de CI; testar fluxos CRUD com backend dedicado; paginação; validar autenticação/RLS; revisão mobile.
+
+## Confirmação de operações e sincronização da interface — 15/11/2026
+- Formulários de clientes e equipamentos preservam confirmação de gravação quando a recarga da lista falha; o erro de sincronização é exibido separadamente.
+- Conclusão de lembrete remove o item da lista local após confirmação do PATCH, preservando a mensagem caso a recarga falhe.
+- Commits: `830c0ce` e `2c79541`.
+- **Validação pendente:** testes de interface e integração, pois a máquina de execução não resolve `github.com` e o GitHub não retornou runs de CI para o último commit.
+- **Próxima execução:** revisão dos estados de erro de exclusão, paginação de clientes e verificação de autenticação/RLS quando houver banco dedicado.
+
+## Ciclo de qualidade — 15/11/2026
+- Workflow `quality.yml` aceita `workflow_dispatch`, além de `push` e `pull_request`.
+- Esquema inicial exige identificação não vazia para equipamentos e limita `service_visits.service_type` a `higienizacao`, `manutencao` ou `outro`.
+- A validação na API/RPC não substitui as restrições no banco; ambas foram mantidas.
+- **Validação pendente:** o ambiente local não resolve `github.com` para clonar e executar a suíte; a execução de GitHub Actions precisa ser confirmada pelos logs antes de considerar o CI aprovado.
+- **Bloqueio externo:** não há banco Supabase exclusivo provisionado para aplicar e verificar o SQL. Não reutilizar bancos de outros projetos.
+- **Fila:** (1) obter logs CI; (2) provisionar banco dedicado; (3) aplicar migrations; (4) testar RLS, integridade e RPC; (5) homologar CRUD, responsividade e fluxos de erro; (6) revisar PRs e preparar release.
+
+## Lembretes e integridade referencial — 13/11/2026
+- Link de WhatsApp passa a adicionar DDI 55 a números brasileiros sem prefixo internacional.
+- A FK `reminders(visit_id,equipment_id)` recebeu `ON DELETE CASCADE` no esquema inicial, para excluir lembretes quando um atendimento for removido.
+- **Atenção:** alteração de esquema apenas no arquivo `database/001_initial_schema.sql`; banco ainda não provisionado. Se já houver implantação em algum ambiente, será necessária migration específica de alteração de constraint, não reaplicação do SQL inicial.
+- Próxima validação: testar exclusão em cascata, consentimento de contato, números brasileiros, CI e build.
+
+## Confirmação de persistência — 13/11/2026
+- Criação de cliente e equipamento só é considerada confirmada quando a API retorna um registro com ID.
+- Erros de resposta vazia orientam conferir a lista antes de repetir a operação, evitando duplicidade.
+- Adicionados testes simulados de criação confirmada e sem confirmação.
+- **Não homologado:** testes automatizados e integração com banco dedicado ainda pendentes.
+
+# Roadmap — Clean Air (12/11/2026)
+
+> Fonte de acompanhamento: checklist versionado no GitHub. Os estados abaixo são de implementação no código, **não** de homologação em produção.
+
+## Meta
+Site institucional profissional e Clean Air Gestão privado, utilizável pelo proprietário em celular: clientes, equipamentos, higienização, testes antes/depois, histórico, relatório e retorno anual.
+
+## Entregas e critérios de aceite
+
+### Fase 0 — Fundação
+- [x] CA-001 — Definir entidades e fluxo de atendimento (documentação).
+- [x] CA-002 — Criar interface inicial de clientes/equipamentos/atendimentos/lembretes (sem homologação).
+- [x] CA-003 — Preparar SQL com RLS (ainda não aplicado).
+- [ ] CA-004 — Disponibilizar projeto PostgreSQL/Supabase exclusivo. **BLOQUEADO:** limite de 2 projetos gratuitos ativos; não pausar/excluir projetos existentes sem autorização específica.
+- [ ] CA-005 — Aplicar migração em ambiente isolado e testar permissões para anônimo, autenticado não autorizado e administrador.
+- [ ] CA-006 — Validar build, lint, testes e CI para a aplicação.
+
+### Fase 1 — Acesso e cadastros
+- [ ] CA-007 — Login do proprietário com conta pré-aprovada, MFA, recuperação de senha e logout.
+- [ ] CA-008 — Criar/editar/pesquisar clientes por nome e telefone, consentimento e canal preferido.
+- [ ] CA-009 — CRUD de equipamentos associados ao cliente.
+- [ ] CA-010 — Garantir isolamento de dados com testes de autorização; sem dados de clientes no localStorage.
+
+### Fase 2 — Serviço principal: higienização
+- [ ] CA-011 — Ficha de atendimento com higienização em destaque, manutenção e outros serviços.
+- [ ] CA-012 — Medições antes/depois: temperatura (°C), velocidade do ar (m/s), condições de teste e instrumento.
+- [ ] CA-013 — Comparativo de variações com validações; **não** converter medições em promessa de economia elétrica.
+- [ ] CA-014 — Fotos antes/depois em armazenamento privado com política de acesso e limites de upload.
+- [ ] CA-015 — Histórico por aparelho, edição/correção e trilha de auditoria.
+
+### Fase 3 — Relatório e relacionamento
+- [ ] CA-016 — PDF técnico com identificação, serviço, fotos, medições e observações.
+- [ ] CA-017 — Compartilhamento manual pelo WhatsApp com confirmação do usuário.
+- [ ] CA-018 — Lembrete anual sugerido (editável), painel de pendências e registro de contato.
+- [ ] CA-019 — Dashboard simples com busca e ações rápidas.
+
+### Fase 4 — Site público
+- [ ] CA-020 — Concluir redesign responsivo, incluindo Sobre, Contato e Serviços.
+- [ ] CA-021 — Revisar SEO, dados comerciais, links, domínio, alegações e informações de contato.
+- [ ] CA-022 — Revisão de acessibilidade, mobile e formulários; testes no domínio de produção.
+
+### Fase 5 — Homologação e lançamento
+- [ ] CA-023 — Revisar LGPD: aviso de privacidade, finalidade, retenção, acesso e exportação.
+- [ ] CA-024 — Backups/restauração, recuperação de incidentes e segurança das sessões.
+- [ ] CA-025 — Testes automatizados, validação em ambiente de homologação e teste com o proprietário.
+- [ ] CA-026 — Deploy de produção com configuração de ambiente, monitoramento e documentação operacional.
+
+## Auditoria de integração — 13/11/2026
+- PR #2 (`feat/redesign-clean-air-2026`): redesign, SQL inicial, tela `/gestao` com CRUD inicial de clientes/equipamentos, atendimentos e lembretes. **Código não homologado em produção.**
+- PR #3 (`v0/checkup-cleanair`): dashboard `/admin`, `/clients` e `/equipment` com fixtures estáticas e salvamento somente em memória. Melhorias de UX e botão flutuante devem ser portadas seletivamente, sem tornar fixtures operacionais.
+- As branches divergem; merge automático pode sobrescrever componentes de layout e rotas. Não foi realizado merge em `main`.
+- Supabase: dois projetos ativos na organização; nenhum banco exclusivo Clean Air disponível. Criar terceiro projeto gratuito retorna erro de cota. Não pausar projetos nem usar outro banco sem autorização.
+- Auth: login via API e allowlist, token renovável em memória; sessão é perdida ao recarregar. MFA e testes RLS pendentes.
+- Integridade: criação de atendimento e medições ocorre em requisições separadas; requer transação no servidor/RPC antes de produção para evitar gravação parcial.
+- CI: workflow configurado, mas ainda sem evidência de execução bem-sucedida nesta auditoria.
+- Não utilizar dados reais até concluir CA-004, CA-005, CA-007 e CA-010.
+
+## Implementação incremental — 13/11/2026
+- Adicionada `database/002_atomic_service_visit.sql` com função `public.create_service_visit` (SECURITY INVOKER) para inserir atendimento, até duas medições e lembrete na mesma transação.
+- `src/lib/gestaoApi.js` agora chama a RPC; `src/views/Gestao.vue` não duplica o lembrete.
+- A RPC depende da aplicação sequencial dos scripts 001 e 002 em um projeto exclusivo; sem banco disponível, não há teste de integração ou verificação de RLS.
+- Critério de aceite pendente: transação deve reverter completamente quando uma medição for inválida, usuário não autorizado deve receber erro de permissão, e um atendimento válido deve gerar um único lembrete.
+
+## Validação do cliente API — 13/11/2026
+- Corrigidas sequências literais de quebra de linha que invalidavam o JavaScript em `src/lib/gestaoApi.js`.
+- A camada REST agora suporta respostas JSON escalares da RPC e trata operações PATCH sem registro alterado como erro.
+- Adicionados testes de contrato com `fetch` simulado em `tests/gestaoApi.test.js`; não são testes reais de banco/RLS.
+- Corrigida semântica HTML de `main` aninhado na gestão.
+- Execução de `npm test` e `npm run build` ainda não verificada nesta sessão. Sem deploy ou merge em `main`.
+
+## Segurança e contratos de API — 13/11/2026
+- Removido endpoint de criação avulsa de lembretes da camada cliente: lembretes de visitas são gerados pela RPC transacional.
+- Testes simulados adicionais: conta não autorizada não permanece logada; logout limpa sessão mesmo com falha remota; resposta 204 em exclusão gera mensagem clara.
+- Import descontinuado removido de `Gestao.vue` para evitar falha de build.
+- **Validação pendente:** testes ainda não executados no CI; não confundir testes simulados com testes reais de autenticação/RLS no Supabase.
+- Ambiente local desta sessão não possui acesso de rede ao GitHub para checkout e execução integral do build. Não foi realizado deploy.
+
+## Robustez do frontend — 13/11/2026
+- Corrigido logout: mesmo se a API de revogação falhar, o painel limpa dados da sessão na interface.
+- Tratamento de erros de consulta de equipamentos e atendimentos ao trocar seletores.
+- Datas de lembrete calculadas pelo calendário local, sem conversão UTC.
+- Resposta 401 invalida sessão em memória no cliente.
+- Tentativa de checkout para execução local falhou por DNS (`Could not resolve host: github.com`). **Nenhum build ou teste foi executado com sucesso nesta etapa.**
+- Validação visual, CI, testes reais de RLS e banco exclusivo continuam pendentes.
+
+## Integridade e sessão — 13/11/2026
+- `database/002_atomic_service_visit.sql` rejeita duas medições com a mesma fase; transação deve reverter por completo quando houver falha.
+- `Gestao.vue` impede submissões simultâneas, valida nome e identificação e limpa a UI quando a sessão é invalidada por 401.
+- Adicionado teste de contrato para invalidação da sessão após HTTP 401.
+- **Pendente:** execução de testes e build no CI; implantação SQL e testes reais em Supabase dedicado. Nenhum merge/deploy foi realizado.
+
+## Tratamento de falhas parciais — 13/11/2026
+- A gravação de atendimento agora informa sucesso mesmo se a atualização posterior do histórico falhar, evitando confusão entre falha de leitura e falha de escrita.
+- Medições numéricas inválidas são rejeitadas antes da chamada RPC.
+- `updateCustomer` e `updateEquipment` tratam resposta HTTP 204 sem gerar `TypeError`.
+- A criação de atendimento exige UUID retornado pela RPC; se faltar confirmação, orienta consultar o histórico antes de repetir, reduzindo duplicações.
+- Adicionados testes de contrato para respostas vazias; **execução não confirmada**.
+- Próximas tarefas em ordem: (1) obter execução CI `npm test` + `npm run build`; (2) corrigir falhas de CI; (3) provisionar Supabase dedicado; (4) aplicar SQL 001/002 e testar rollback/RLS; (5) testar CRUD e UX mobile; (6) avaliar integração seletiva da PR #3; (7) homologar PR #2, sem merge/deploy automático.
+
+## Validação de respostas de autenticação e RPC — 13/11/2026
+- Login rejeita resposta sem `access_token`, `refresh_token` ou duração de sessão válida.
+- Criação de atendimento exige UUID em formato válido antes de confirmar o resultado.
+- Testes simulados adicionados para ambos os cenários.
+- Consulta de workflows do commit `4f2dc30580c67c6a287d4161f40a3bd42cc4e9ef`: nenhuma execução retornada. Isso **não comprova** sucesso ou falha da suíte.
+- **Próximos passos:** obter execução CI e logs; provisionar banco dedicado; testar RLS e RPC com transações; homologar interface mobile e CRUD; revisar PR #3; somente depois considerar merge.
+
+## Sequência imediata
+1. CA-004: resolver infraestrutura do banco sem afetar outros projetos.
+2. CA-005 e CA-006: aplicar migração e validar build/permissões.
+3. CA-007 a CA-010: fechar um fluxo real e seguro de cadastro.
+
+## Regras de entrega
+- Cada tarefa concluída exige evidência de teste, commit/PR e revisão do impacto.
+- Não marcar como concluída uma tarefa só porque uma tela foi desenhada.
+- Não cadastrar clientes reais antes de homologar autenticação e RLS.
+- Não efetuar alterações destrutivas em outros projetos para liberar cota.

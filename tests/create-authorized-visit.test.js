@@ -1,0 +1,12 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {createAuthorizedVisit} from '../api/_lib/create-authorized-visit.js';
+const uuid='123e4567-e89b-42d3-a456-426614174000';
+const body={equipment_id:uuid,service_type:'higienizacao',measurements:[{phase:'antes',air_velocity_ms:2.3}]};
+const context=(session,query)=>({getSession:async()=>session,findUser:async()=>({id:'admin1',role:'admin'}),query});
+test('nega operação sem sessão antes de consultar banco',async()=>{let calls=0;await assert.rejects(createAuthorizedVisit({body},{...context(null,async()=>{calls++})}),e=>e.status===401);assert.equal(calls,0)});
+test('nega conta sem papel admin antes de SQL',async()=>{let calls=0;const ctx=context({user:{id:'admin1'}},async()=>{calls++});ctx.findUser=async()=>({id:'admin1',role:'user'});await assert.rejects(createAuthorizedVisit({body},ctx),e=>e.status===403);assert.equal(calls,0)});
+test('rejeita medição inválida antes de SQL',async()=>{let calls=0;await assert.rejects(createAuthorizedVisit({body:{...body,measurements:[{phase:'antes'},{phase:'antes'}]}},context({user:{id:'admin1'}},async()=>{calls++})),/duplicada/);assert.equal(calls,0)});
+test('executa SQL parametrizado e confirma UUID',async()=>{let sql,values;const result=await createAuthorizedVisit({body},context({user:{id:'admin1'}},async(s,v)=>{sql=s;values=v;return {rows:[{id:uuid}]}}));assert.deepEqual(result,{id:uuid});assert.match(sql,/\$1::uuid/);assert.equal(values[0],uuid);assert.deepEqual(JSON.parse(values[4]),[{phase:'antes',air_velocity_ms:2.3,outlet_temperature_c:null,test_conditions:null}])});
+test('rejeita resposta sem UUID válido',async()=>{await assert.rejects(createAuthorizedVisit({body},context({user:{id:'admin1'}},async()=>({rows:[{id:'nope'}]}))),/não confirmou/)});
+test('falha sem executor SQL configurado',async()=>{await assert.rejects(createAuthorizedVisit({body},{getSession:async()=>null,findUser:async()=>null}),TypeError)});

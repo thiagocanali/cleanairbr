@@ -21,3 +21,13 @@ test('formatação em pt-BR',()=>{
   assert.equal(formatDifference(1.25,1),'+1,3');
   assert.equal(formatDifference(-6,0),'-6');
 });
+
+test('rejeita números não finitos e não confunde ausência com zero',()=>{
+  assert.equal(compareMeasurements(undefined,4),null);
+  assert.equal(compareMeasurements(4,undefined),null);
+  assert.equal(compareMeasurements(Infinity,4),null);
+  assert.equal(compareMeasurements(4,-Infinity),null);
+  assert.equal(compareMeasurements(NaN,4),null);
+  assert.equal(compareMeasurements(0,0).difference,0);
+  assert.equal(compareMeasurements(0,0).percent,null);
+});
